@@ -1,0 +1,399 @@
+/* CSS tổng thể */
+.admin-body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+/* Tiêu đề trang Admin */
+.title_admin {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    padding: 20px 0;
+}
+
+/* Wrapper chứa toàn bộ trang */
+.wrapper {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 20px;
+}
+
+ul.admincp_list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+ul.admincp_list li{
+    float: left;
+    margin: 5px;
+
+}
+.clear{
+    clear: both;
+}
+h3.title_admin{
+    text-align: center;
+    font-size: 40px;
+    color: brown;
+}
+.wrapper{
+    border: 1px solid #000;
+    height: auto;
+    width: 90%;
+    margin: 0 auto;
+}
+/* 📌 Menu tổng thể */
+.admincp_list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    background: #007bff;
+    padding: 10px;
+    border-radius: 8px;
+    flex-wrap: wrap; /* 🔥 Giúp menu không bị tràn khi màn hình nhỏ */
+    max-width: 100%;
+}
+
+/* 📌 Mục menu */
+.admincp_list li {
+    margin: 5px;
+}
+
+/* 📌 Liên kết menu */
+.admincp_link {
+    text-decoration: none;
+    background: white;
+    color: #007bff;
+    padding: 12px 18px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: block;
+    white-space: nowrap; /* 📌 Giữ chữ không xuống dòng */
+}
+
+/* 📌 Hover */
+.admincp_link:hover {
+    background: #0056b3;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 📌 Khi màn hình nhỏ, menu sẽ tự xuống dòng */
+@media screen and (max-width: 768px) {
+    .admincp_list {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+    }
+    .admincp_list li {
+        width: 100%;
+        text-align: center;
+    }
+    .admincp_link {
+        width: 80%;
+    }
+}
+
+/* Nút đăng xuất */
+.admincp_logout {
+    text-decoration: none;
+    background: red;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.admincp_logout:hover {
+    background: darkred;
+}
+/* Căn giữa toàn bộ form */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
+
+/* Khung chứa form */
+.styled-form {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    padding: 20px;
+    width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Tiêu đề form */
+.form-title {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Nhãn của ô nhập */
+.form-label {
+    display: block;
+    font-weight: bold;
+    color: #fff;
+    text-align: left;
+    margin-top: 10px;
+}
+
+/* Ô nhập liệu */
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    font-size: 16px;
+}
+
+/* Hiệu ứng khi click vào ô nhập */
+.input-field:focus {
+    box-shadow: 0px 0px 5px #ffcc00;
+}
+
+/* Nút bấm */
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background: #ffcc00;
+    color: #333;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hiệu ứng hover cho nút */
+.submit-btn:hover {
+    background: #ff9900;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Hiệu ứng bấm vào nút */
+.submit-btn:active {
+    transform: scale(0.95);
+}
+/* Tiêu đề bảng */
+.table-title {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Bảng */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Tiêu đề bảng */
+.styled-table th {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+}
+
+.styled-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Dòng xen kẽ */
+.styled-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Nút Xóa và Sửa */
+.btn {
+    text-decoration: none;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 3px;
+    transition: all 0.3s;
+}
+/* 📌 Nút Xóa */
+.delete-btn {
+    background: #ff4d4d;
+    color: white;
+    padding: 6px 10px; /* Thu nhỏ padding */
+    font-size: 14px; /* Chỉnh cỡ chữ nhỏ lại */
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.delete-btn:hover {
+    background: #cc0000;
+    transform: scale(1.03); /* Thu nhỏ hiệu ứng phóng to */
+}
+
+/* 📌 Nút Sửa */
+.edit-btn {
+    background: #ffcc00;
+    color: #333;
+    padding: 6px 10px; /* Thu nhỏ padding */
+    font-size: 14px; /* Chỉnh cỡ chữ nhỏ lại */
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.edit-btn:hover {
+    background: #ff9900;
+    color: white;
+    transform: scale(1.03); /* Thu nhỏ hiệu ứng phóng to */
+}
+
+/* 📌 Tạo background gradient nhẹ */
+body {
+    background: linear-gradient(135deg, #f0f4ff, #d9e4ff);
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.form-title {
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(135deg, #3498db, #8e44ad);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* 📌 Form container */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+/* 📌 Bảng chứa form */
+.styled-form-table {
+    width: 80%;
+    max-width: 800px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* 🎨 Animation xuất hiện */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🌟 Ô nhập liệu */
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 🔥 Hiệu ứng focus */
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    border-color: #8e44ad;
+    box-shadow: 0 0 8px rgba(142, 68, 173, 0.6);
+    transform: scale(1.02);
+}
+
+/* 📌 Ô textarea */
+.form-textarea {
+    resize: none;
+    height: 100px;
+}
+
+/* 📂 Ô chọn file */
+.form-input-file {
+    width: 100%;
+    padding: 10px;
+    background: #f7f7f7;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* 🔥 Label đẹp hơn */
+.form-label {
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 10px;
+    font-size: 16px;
+    background: linear-gradient(135deg, #f7f7f7, #ddd);
+    border-radius: 5px;
+}
+
+/* 🚀 Nút Submit */
+.submit-btn {
+    background: linear-gradient(135deg, #28a745, #218838);
+    color: white;
+    border: none;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* ✨ Hiệu ứng hover */
+.submit-btn:hover {
+    background: linear-gradient(135deg, #218838, #1e7e34);
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* 🟢 Hiệu ứng khi bấm */
+.submit-btn:active {
+    transform: scale(0.98);
+}
