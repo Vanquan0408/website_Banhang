@@ -1,5 +1,6 @@
 <div class="sidebar">
-       <ul class="list_sidebar">
+     <ul class="list_sidebar">
+        <!-- giỏ hàng đã chuyển lên menu trên, không cần hiển thị ở sidebar nữa -->
        <?php
     $sql_danhmuc= "SELECT * FROM  danhmuc ORDER BY id_danhmuc DESC ";
     $query_danhmuc = mysqli_query($mysqli,$sql_danhmuc);

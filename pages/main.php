@@ -1,8 +1,11 @@
-<div id="main"> 
+<div id="main">
     <?php
-    include("sidebar/sidebar.php");
+   // không hiển thị sidebar khi chỉnh sửa địa chỉ (tránh danh mục bên trái)
+   if (!isset($_GET['quanly']) || $_GET['quanly'] !== 'thaydoidiachi') {
+      include("sidebar/sidebar.php");
+   }
     ?>
-       <div class="maincontent">
+    <div class="maincontent">
         <?php
        if(isset($_GET['quanly'])){
         $tam=$_GET['quanly'];
@@ -21,19 +24,18 @@
          include('main/sanpham.php');
       }elseif ($tam=='dangky'){
          include('main/dangky.php');
-      }elseif ($tam=='thanhtoan'){
-         include('main/thanhtoan.php');
+          // 'thanhtoan' page removed; ordering now handled inside giohang.php
       }elseif ($tam=='dangnhap'){
          include('main/dangnhap.php');
       }elseif ($tam=='timkiem'){
          include('main/timkiem.php');
-      }elseif ($tam=='thanhtoan'){
-         include('main/thanhtoan.php');
       }elseif ($tam=='thaydoimatkhau'){
          include('main/thaydoimatkhau.php');
+         } elseif ($tam=='thaydoidiachi'){
+             include('main/thaydoidiachi.php');
       }else{
         include('main/index.php');
        }
        ?>
-       </div>
     </div>
+</div>

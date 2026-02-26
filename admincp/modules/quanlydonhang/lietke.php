@@ -1,7 +1,12 @@
 <?php
-$sql_lietke_dh = "SELECT * FROM table_giohang,table_dangky 
- WHERE table_giohang.id_khachhang=table_dangky.id_dangky 
- ORDER BY table_giohang.id_cart DESC";
+$sql_lietke_dh = "SELECT table_giohang.*, 
+                table_dangky.tenkhachhang, 
+                table_dangky.email, 
+                table_dangky.diachi AS default_diachi, 
+                table_dangky.dienthoai AS default_dienthoai
+            FROM table_giohang
+            JOIN table_dangky ON table_giohang.id_khachhang=table_dangky.id_dangky 
+            ORDER BY table_giohang.id_cart DESC";
 $query_lietke_dh = mysqli_query($mysqli ,$sql_lietke_dh);
 ?>
 <p class="table-title">Liệt kê đơn hàng </p>
@@ -25,9 +30,15 @@ $query_lietke_dh = mysqli_query($mysqli ,$sql_lietke_dh);
         <td><?php echo $i ?></td>
         <td><?php echo $row['code_cart'] ?></td>
         <td><?php echo $row['tenkhachhang'] ?></td>
-        <td><?php echo $row['diachi'] ?></td>
+        <td><?php
+            if (!empty($row['ap'])) {
+                echo htmlspecialchars($row['ap'] . ', ' . $row['xa'] . ', ' . $row['tinh']);
+            } else {
+                echo htmlspecialchars($row['default_diachi']);
+            }
+        ?></td>
         <td><?php echo $row['email'] ?></td>
-        <td><?php echo $row['dienthoai'] ?></td>
+        <td><?php echo htmlspecialchars(!empty($row['dienthoai']) ? $row['dienthoai'] : $row['default_dienthoai']); ?></td>
         <td>
             <?php
             if($row['cart_status']==1){

@@ -81,4 +81,20 @@ ul.list_trang li:hover {
 ul.list_trang li a:hover {
     color: white;
 }
+
+/* ensure homepage shows 4 products per row even if the main stylesheet
+   gets reverted; inline styles are last-resort fallback for layout */
+ul.product_list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+ul.product_list li {
+    /* remove default bullet and allow automatic sizing */
+    list-style: none;
+}
 </style>

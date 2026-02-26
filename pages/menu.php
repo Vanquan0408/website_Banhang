@@ -23,8 +23,9 @@ if(isset($_GET['dangxuat'])&&$_GET['dangxuat']==1){
             <?php
             if(isset($_SESSION['dangky'])){
             ?>
-            <li><a href="index.php?dangxuat=1">Đăng xuất</a></li>
+            <li><a href="index.php?quanly=thaydoidiachi">Thay đổi địa chỉ</a></li>
             <li><a href="index.php?quanly=thaydoimatkhau">Đổi mật khẩu</a></li>
+            <li><a href="index.php?dangxuat=1">Đăng xuất</a></li>
             <?php
             }else{
             ?>

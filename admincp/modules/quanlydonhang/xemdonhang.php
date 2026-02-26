@@ -11,7 +11,15 @@ $sql_lietke_dh = "SELECT * FROM table_chitietdonhang, sanpham
 $query_lietke_dh = mysqli_query($mysqli ,$sql_lietke_dh);
 
 // Truy vấn thông tin khách hàng
-$sql_khachhang = "SELECT table_dangky.tenkhachhang, table_dangky.diachi, table_dangky.dienthoai, table_dangky.email
+$sql_khachhang = "SELECT table_dangky.tenkhachhang,
+                         table_dangky.email,
+                         table_dangky.diachi AS default_diachi,
+                         table_dangky.dienthoai AS default_dienthoai,
+                         table_giohang.ap AS order_ap,
+                         table_giohang.xa AS order_xa,
+                         table_giohang.tinh AS order_tinh,
+                         table_giohang.ghichu AS order_ghichu,
+                         table_giohang.dienthoai AS order_dienthoai
                   FROM table_giohang
                   JOIN table_dangky ON table_giohang.id_khachhang = table_dangky.id_dangky
                   WHERE table_giohang.code_cart = '$code' LIMIT 1";
@@ -35,8 +43,25 @@ $khachhang = mysqli_fetch_assoc($query_khachhang);
     <div class="invoice-box">
         <h2>HÓA ĐƠN MUA HÀNG</h2>
         <p><strong>Khách hàng:</strong> <?php echo htmlspecialchars($khachhang['tenkhachhang']); ?></p>
-        <p><strong>Địa chỉ:</strong> <?php echo htmlspecialchars($khachhang['diachi']); ?></p>
-        <p><strong>Số điện thoại:</strong> <?php echo htmlspecialchars($khachhang['dienthoai']); ?></p>
+        <p><strong>Địa chỉ:</strong> <?php
+            $addr = '';
+            if (!empty($khachhang['order_ap'])) {
+                $addr .= $khachhang['order_ap'];
+                if (!empty($khachhang['order_xa'])) $addr .= ', ' . $khachhang['order_xa'];
+                if (!empty($khachhang['order_tinh'])) $addr .= ', ' . $khachhang['order_tinh'];
+            } else {
+                $addr = $khachhang['default_diachi'];
+            }
+            echo htmlspecialchars($addr);
+        ?></p>
+        <?php if (!empty($khachhang['order_ghichu'])): ?>
+            <p><strong>Ghi chú:</strong> <?php echo htmlspecialchars($khachhang['order_ghichu']); ?></p>
+        <?php endif; ?>
+        <p><strong>Số điện thoại:</strong> <?php
+            echo htmlspecialchars(!empty($khachhang['order_dienthoai']) ?
+                                 $khachhang['order_dienthoai'] :
+                                 $khachhang['default_dienthoai']);
+        ?></p>
         <p><strong>Email:</strong> <?php echo htmlspecialchars($khachhang['email']); ?></p>
 
         <table>
