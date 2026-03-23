@@ -1,21 +1,4 @@
 <div id="main">
-    <?php
-   // không hiển thị sidebar khi chỉnh sửa địa chỉ (tránh danh mục bên trái)
-
-if (
-    !isset($_GET['quanly']) ||
-    !in_array($_GET['quanly'], [
-        'thaydoidiachi',
-        'dangky',
-        'tintuc',
-        'lienhe',
-        'thaydoimatkhau',
-        'dangnhap'
-    ])
-) {
-    include("sidebar/sidebar.php");
-}
-    ?>
     <div class="maincontent">
         <?php
        if(isset($_GET['quanly'])){

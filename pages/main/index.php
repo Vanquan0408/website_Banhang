@@ -18,8 +18,8 @@ $query_pro = mysqli_query($mysqli, $sql_pro);
             <a href="index.php?quanly=sanpham&id=<?php echo $row['id_sanpham'] ?>">
                 <img src="admincp/modules/quanlysp/upload/<?php echo $row['hinhanh'] ?>" alt="<?php echo $row['tensanpham'] ?>"/>
                 <p class="title_product">Tên sản phẩm: <?php echo $row['tensanpham'] ?></p>
-                <p class="price_product">Giá: <?php echo number_format($row['giasp'], 0, ',', '.') . ' VND' ?></p>
-                <p style="text-align: center; color: red"><?php echo $row['tendanhmuc'] ?></p>
+                <p class="price_product"><?php echo number_format($row['giasp'], 0, ',', '.') . 'đ' ?></p>
+                <p class="category_product"><?php echo $row['tendanhmuc'] ?></p>
             </a>
         </li>
     <?php } ?>
@@ -39,7 +39,7 @@ $total_pages = ceil($total_records / $limit);
     <?php endif; ?>
 
     <?php for ($i = max(1, $page - 2); $i <= min($total_pages, $page + 2); $i++): ?>
-        <li <?php echo ($i == $page) ? 'style="background: brown; color: white;"' : ''; ?>>
+        <li class="<?php echo ($i == $page) ? 'is-active' : ''; ?>">
             <a href="index.php?trang=<?php echo $i; ?>"><?php echo $i; ?></a>
         </li>
     <?php endfor; ?>
@@ -49,52 +49,3 @@ $total_pages = ceil($total_records / $limit);
         <li><a href="index.php?trang=<?php echo $total_pages; ?>">»</a></li>
     <?php endif; ?>
 </ul>
-
-<style>
-ul.list_trang {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    padding: 10px;
-    list-style: none;
-}
-
-ul.list_trang li {
-    padding: 8px 12px;
-    background: burlywood;
-    border-radius: 5px;
-    transition: 0.3s;
-}
-
-ul.list_trang li a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
-}
-
-ul.list_trang li:hover {
-    background: chocolate;
-    transform: scale(1.1);
-}
-
-ul.list_trang li a:hover {
-    color: white;
-}
-
-/* ensure homepage shows 4 products per row even if the main stylesheet
-   gets reverted; inline styles are last-resort fallback for layout */
-ul.product_list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-ul.product_list li {
-    /* remove default bullet and allow automatic sizing */
-    list-style: none;
-}
-</style>

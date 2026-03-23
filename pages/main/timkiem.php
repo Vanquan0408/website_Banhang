@@ -19,14 +19,14 @@ if(isset($_POST['timkiem'])){
             <a href="index.php?quanly=sanpham&id=<?php echo $row['id_sanpham']; ?>">
                 <img src="admincp/modules/quanlysp/upload/<?php echo $row['hinhanh']; ?>" />
                 <p class="title_product"><b>Tên sản phẩm:</b> <?php echo $row['tensanpham']; ?></p>
-                <p class="price_product"><b>Giá:</b> <?php echo number_format($row['giasp'], 0, ',', '.') . ' VND'; ?></p>
-                <p style="text-align: center; color: red;"><b><?php echo $row['tendanhmuc']; ?></b></p>
+                <p class="price_product"><?php echo number_format($row['giasp'], 0, ',', '.') . 'đ'; ?></p>
+                <p class="category_product"><b><?php echo $row['tendanhmuc']; ?></b></p>
             </a>
         </li>
     <?php
         }
     } else {
-        echo "<p style='color:red; text-align:center; font-weight:bold;'>Không tìm thấy sản phẩm nào!</p>";
+        echo "<p class='empty-cart'>Không tìm thấy sản phẩm nào!</p>";
     }
     ?>
 </ul>

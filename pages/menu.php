@@ -10,36 +10,52 @@ if(isset($_GET['dangxuat'])&&$_GET['dangxuat']==1){
 }
 ?>
 <div class="menu">
+    <div class="container menu-inner">
         <ul class="list_menu">
-            <li><a href="index.php">Trang chủ</a> </li>
-            <!-- <?php
-                while($row_danhmuc = mysqli_fetch_array($query_danhmuc)){
-            ?>
-            <li><a href="index.php?quanly=danhmucsanpham&id=<?php echo $row_danhmuc['id_danhmuc']?>"><?php echo $row_danhmuc['tendanhmuc']?></a> </li>
-            <?php
-                }
-            ?> -->
-            <li><a href="index.php?quanly=giohang">Giỏ hàng </a></li>
+            <li><a href="index.php">Trang chủ</a></li>
             <?php
             if(isset($_SESSION['dangky'])){
             ?>
-            <li><a href="index.php?quanly=thaydoidiachi">Thay đổi địa chỉ</a></li>
-            <li><a href="index.php?quanly=thaydoimatkhau">Đổi mật khẩu</a></li>
-            <li><a href="index.php?dangxuat=1">Đăng xuất</a></li>
-            <?php
-            }else{
-            ?>
-                <li><a href="index.php?quanly=dangky">Đăng Ký </a></li>
+                <?php /* Đã chuyển vào menu tài khoản (icon người dùng) trên header */ ?>
             <?php
             }
             ?>
-            <li><a href="index.php?quanly=tintuc">Tin tức </a></li>
-            <li><a href="index.php?quanly=lienhe">Liên hệ </a> </li>
+            <li><a href="index.php?quanly=tintuc">Tin tức</a></li>
+            <li><a href="index.php?quanly=lienhe">Liên hệ</a></li>
         </ul>
-    <p>  
+
         <form action="index.php?quanly=timkiem" method="POST">
-        <input type="text" placeholder="Tìm kiếm sản phẩm..."name="tukhoa">
-        <input type="submit" name="timkiem" VALUE="Tìm kiếm">
+            <input type="text" placeholder="Tìm kiếm sản phẩm..." name="tukhoa">
+            <button class="search-btn" type="submit" name="timkiem" value="1">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" d="M10.5 3a7.5 7.5 0 1 1 4.62 13.41l3.23 3.23a1 1 0 0 1-1.42 1.42l-3.23-3.23A7.5 7.5 0 0 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11a5.5 5.5 0 0 0 0-11Z"/>
+                </svg>
+                <span>Tìm kiếm</span>
+            </button>
         </form>
-    </p>
+    </div>
+
+    <div class="category-bar">
+        <div class="container">
+            <div class="category-bar-inner">
+                <div class="category-label">Danh mục</div>
+                <ul class="category-pills">
+                    <?php
+                    $activeCategoryId = 0;
+                    if (isset($_GET['quanly']) && $_GET['quanly'] === 'danhmucsanpham') {
+                        $activeCategoryId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+                    }
+                    ?>
+                    <li class="<?php echo ($activeCategoryId === 0) ? 'is-active' : ''; ?>"><a href="index.php">Tất cả</a></li>
+                    <?php while($row_danhmuc = mysqli_fetch_assoc($query_danhmuc)) { ?>
+                        <li class="<?php echo ($activeCategoryId === (int)$row_danhmuc['id_danhmuc']) ? 'is-active' : ''; ?>">
+                            <a href="index.php?quanly=danhmucsanpham&id=<?php echo (int)$row_danhmuc['id_danhmuc'] ?>">
+                                <?php echo htmlspecialchars($row_danhmuc['tendanhmuc']); ?>
+                            </a>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+    </div>
     </div>

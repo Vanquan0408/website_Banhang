@@ -1,4 +1,5 @@
 <div class="sidebar">
+    <h3>Danh mục sản phẩm</h3>
      <ul class="list_sidebar">
         <!-- giỏ hàng đã chuyển lên menu trên, không cần hiển thị ở sidebar nữa -->
        <?php

@@ -1,3 +1,9 @@
+<?php
+ob_start();
+session_start();
+include("admincp/config/config.php");
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,8 +17,6 @@
 <body>
    <div class="wrapper"> 
     <?php
-    session_start();
-    include("admincp/config/config.php");
     include("pages/header.php");
     include("pages/menu.php");
     include("pages/main.php");

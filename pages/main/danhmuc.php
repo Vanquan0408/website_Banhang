@@ -27,7 +27,7 @@ $row_title = mysqli_fetch_assoc($query_cate);
             <a href="index.php?quanly=sanpham&id=<?php echo $row_pro['id_sanpham'] ?>">
                 <img src="admincp/modules/quanlysp/upload/<?php echo $row_pro['hinhanh'] ?>" />
                 <p class="title_product">Tên: <?php echo $row_pro['tensanpham'] ?></p>
-                <p class="price_product">Giá: <?php echo number_format($row_pro['giasp'], 0, ',', '.') . ' VND' ?></p>
+                <p class="price_product"><?php echo number_format($row_pro['giasp'], 0, ',', '.') . 'đ' ?></p>
             </a>
         </li>
     <?php } ?>
@@ -41,35 +41,4 @@ $row_trang = mysqli_fetch_assoc($sql_trang);
 $total_records = $row_trang['total'];
 $total_pages = ceil($total_records / $limit);
 ?>
-<style>
-ul.list_trang {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    padding: 10px;
-    list-style: none;
-}
 
-ul.list_trang li {
-    padding: 8px 12px;
-    background: burlywood;
-    border-radius: 5px;
-    transition: 0.3s;
-}
-
-ul.list_trang li a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
-}
-
-ul.list_trang li:hover {
-    background: chocolate;
-    transform: scale(1.1);
-}
-
-ul.list_trang li a:hover {
-    color: white;
-}
-</style>

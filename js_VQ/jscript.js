@@ -98,6 +98,50 @@ $(document).ready(function () {
     e.preventDefault();
   $("#w_update_hh").hide();
   });
+
+  // UI: toggle show/hide password (used on signup/login pages)
+  $(document).on('click', '.js-toggle-password', function () {
+    var targetId = $(this).attr('data-target');
+    if (!targetId) return;
+
+    var $input = $('#' + targetId);
+    if ($input.length === 0) return;
+
+    var isPassword = $input.attr('type') === 'password';
+    $input.attr('type', isPassword ? 'text' : 'password');
+    $(this).toggleClass('is-on', isPassword);
+    $(this).attr('aria-pressed', isPassword ? 'true' : 'false');
+  });
+
+  // UI: user dropdown menu in header
+  function closeUserMenus() {
+    $('.user-menu-wrap.is-open').removeClass('is-open');
+    $('.js-user-menu-toggle[aria-expanded="true"]').attr('aria-expanded', 'false');
+  }
+
+  $(document).on('click', '.js-user-menu-toggle', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    var $wrap = $(this).closest('.user-menu-wrap');
+    var isOpen = $wrap.hasClass('is-open');
+
+    closeUserMenus();
+    if (!isOpen) {
+      $wrap.addClass('is-open');
+      $(this).attr('aria-expanded', 'true');
+    }
+  });
+
+  $(document).on('click', function () {
+    closeUserMenus();
+  });
+
+  $(document).on('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeUserMenus();
+    }
+  });
   
 
 });
