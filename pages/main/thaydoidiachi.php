@@ -48,100 +48,60 @@ $xa_val = $parts[1] ?? '';
 $tinh_val = $parts[2] ?? '';
 
 ?>
-<!-- style giống với trang đổi mật khẩu -->
 <style>
-    .wrapper_login {
-        max-width: 600px;
-        margin: 40px auto;
-        padding: 20px;
-        background: #fff;
-        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-        border-radius: 8px;
-    }
-    .title-change-password {
-        text-align: center;
-        font-size: 22px;
-        font-weight: bold;
-        color: white;
-        background: linear-gradient(45deg, #007bff, #0056b3);
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
-    }
-    .table_login {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .table_login td {
-        padding: 10px;
-        text-align: left;
-    }
-    .table_login input[type="text"],
-    .table_login input[type="tel"],
-    .table_login textarea {
-        width: 95%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        transition: border 0.3s;
-    }
-    .table_login input[type="text"]:focus,
-    .table_login input[type="tel"]:focus,
-    .table_login textarea:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-    .table_login input[type="submit"] {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        background-color: #007bff;
-        color: white;
+    /* Tăng kích thước textbox và chữ cho trang chỉnh địa chỉ */
+    .cart-table input[type="text"],
+    .cart-table input[type="tel"],
+    .cart-table textarea {
         font-size: 16px;
-        font-weight: bold;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s;
+        padding: 10px;
+        height: 40px;
+        box-sizing: border-box;
     }
-    .table_login input[type="submit"]:hover {
-        background-color: #0056b3;
-    }
-    p {
-        margin-top: 10px;
-        font-size: 14px;
+    .cart-table .action-links,
+    .cart-table input[type="submit"] {
+        font-size: 16px;
+        padding: 10px 14px;
     }
 </style>
-<div class="wrapper_login">
-    <h3 class="title-change-password">Chỉnh sửa địa chỉ</h3>
-    <?php if (isset($message)) echo $message; ?>
-    <form method="post" action="">
-        <table class="table_login">
-            <tr>
-                <td>Ấp</td>
-                <td><input type="text" name="ap" value="<?php echo htmlspecialchars($ap_val); ?>" required></td>
-            </tr>
-            <tr>
-                <td>Xã</td>
-                <td><input type="text" name="xa" value="<?php echo htmlspecialchars($xa_val); ?>" required></td>
-            </tr>
-            <tr>
-                <td>Tỉnh/Thành</td>
-                <td><input type="text" name="tinh" value="<?php echo htmlspecialchars($tinh_val); ?>" required></td>
-            </tr>
-            <tr>
-                <td>Số điện thoại</td>
-                <td><input type="tel" name="dienthoai" value="<?php echo htmlspecialchars($user['dienthoai']); ?>" required></td>
-            </tr>
-            <tr>
-                <td>Ghi chú</td>
-                <td><textarea name="ghichu" rows="3"><?php echo htmlspecialchars($user['ghichu'] ?? ''); ?></textarea></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type="submit" name="update_address" value="Cập nhật"></td>
-            </tr>
-        </table>
-    </form>
+
+<div class="maincontent">
+    <div class="content">
+        <div class="content_right">
+            <p class="cart-title">Chỉnh sửa địa chỉ</p>
+
+            <?php if (isset($message)) echo $message; ?>
+
+            <form method="post" action="">
+                <table class="cart-table" border="1" width="50%" style="border-collapse: collapse;">
+                    <tr>
+                        <td>Ấp</td>
+                        <td><input type="text" size="50" name="ap" value="<?php echo htmlspecialchars($ap_val); ?>" required></td>
+                    </tr>
+                    <tr>
+                        <td>Xã</td>
+                        <td><input type="text" size="50" name="xa" value="<?php echo htmlspecialchars($xa_val); ?>" required></td>
+                    </tr>
+                    <tr>
+                        <td>Tỉnh/Thành</td>
+                        <td><input type="text" size="50" name="tinh" value="<?php echo htmlspecialchars($tinh_val); ?>" required></td>
+                    </tr>
+                    <tr>
+                        <td>Số điện thoại</td>
+                        <td><input type="tel" size="50" name="dienthoai" value="<?php echo htmlspecialchars($user['dienthoai']); ?>" required></td>
+                    </tr>
+                    <tr>
+                        <td>Ghi chú</td>
+                        <td><textarea name="ghichu" rows="3"><?php echo htmlspecialchars($user['ghichu'] ?? ''); ?></textarea></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <a href="index.php?quanly=dangnhap" class="danh_nhap">Đăng nhập</a>
+                            <input class="action-links delete-btn" type="submit" name="update_address" value="Cập nhật" style="margin-bottom: 10px;">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
 </div>

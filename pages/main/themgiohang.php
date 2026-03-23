@@ -68,7 +68,12 @@ if(isset($_GET['xoatatca'])&&$_GET['xoatatca']==1){
     header('Location:../../index.php?quanly=giohang');
 }
 if (isset($_POST['themgiohang'])) {
-
+    // Kiểm tra nếu người dùng chưa đăng nhập
+    if (!isset($_SESSION['dangky'])) {
+        // Chuyển hướng đến trang đăng ký
+        header('Location: ../../index.php?quanly=dangky');
+        exit();
+    }
 
     $id = $_POST['idsanpham'];
     $soluong = 1;

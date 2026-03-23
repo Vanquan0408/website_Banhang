@@ -28,17 +28,24 @@ $query_sua_sp = mysqli_query($mysqli ,$sql_sua_sp);
     <tr>
         <td class="form-label">Hình ảnh </td>
         <td >
-            <input class="form-input"type="file" name="hinhanh">
-            <img src="modules/quanlysp/upload/<?php echo $row ['hinhanh']?>" width = "150px">
+            <input class="form-input" type="file" name="hinhanh">
+            <?php
+                $webPath = 'modules/quanlysp/upload/' . $row['hinhanh'];
+                $fsPath = __DIR__ . '/upload/' . $row['hinhanh'];
+            ?>
+            <img src="<?php echo $webPath ?>" width="150px">
+            <div style="font-size:12px;color:#666;margin-top:6px;">
+                Tên file: <?php echo htmlspecialchars($row['hinhanh']); ?> — Tồn tại trên server: <?php echo file_exists($fsPath) ? 'Có' : 'Không'; ?>
+            </div>
         </td>
     </tr>
     <tr>
         <td class="form-label">Tóm tắt </td>
-        <td><textarea class="form-input"rows="10" style ="resize:none"value ="<?php echo $row['tomtat']?>" name = "tomtat"> </textarea></td>
+        <td><textarea class="form-input" rows="10" style="resize:none" name="tomtat"><?php echo htmlspecialchars($row['tomtat']); ?></textarea></td>
     </tr>
     <tr>
         <td class="form-label">Nội dung </td>
-        <td><textarea class="form-input"rows="10" style ="resize:none"value ="<?php echo $row['noidung']?>" name = "noidung"> </textarea></td>
+        <td><textarea class="form-input" rows="10" style="resize:none" name="noidung"><?php echo htmlspecialchars($row['noidung']); ?></textarea></td>
     </tr>
     <tr>
         <td class="form-label">Danh mục sản phẩm </td>

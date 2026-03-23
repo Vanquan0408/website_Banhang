@@ -37,127 +37,57 @@ if (isset($_POST['doimatkhau'])) {
 }
 ?>
 
+<style>
+    /* Tăng kích thước textbox và chữ để hiển thị tốt hơn */
+    .cart-table input[type="email"],
+    .cart-table input[type="password"],
+    .cart-table input[type="text"],
+    .cart-table textarea {
+        font-size: 16px;
+        padding: 10px;
+        height: 40px;
+        box-sizing: border-box;
+    }
+    .cart-table .action-links,
+    .cart-table input[type="submit"] {
+        font-size: 16px;
+        padding: 10px 14px;
+    }
+</style>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+<div class="maincontent">
+    <div class="content">
+        <div class="content_right">
+            <p class="cart-title">Đổi mật khẩu</p>
 
-        .wrapper_login {
-            width: 1000px;
-            padding: 20px;
-            background: white;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            text-align: center;
-        }
+            <?php if (isset($message)) echo $message; ?>
 
-        h3 {
-            margin-bottom: 20px;
-            color: #333;
-            text-align: center
-        }
-
-        .table_login {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table_login td {
-            padding: 10px;
-            text-align: left;
-        
-        }
-
-        .table_login input[type="text"],
-        .table_login input[type="password"] {
-            width: 95%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            transition: border 0.3s;
-        }
-
-        .table_login input[type="text"]:focus,
-        .table_login input[type="password"]:focus {
-            border-color: #007bff;
-            outline: none;
-        }
-
-        .table_login input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .table_login input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        p {
-            margin-top: 10px;
-            font-size: 14px;
-        }
-        .title-change-password {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            color: white;
-            background: linear-gradient(45deg, #007bff, #0056b3);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-        }
-        </style>
-</head>
-<body>
-<div class="wrapper_login">
-    <h3 class="title-change-password">Đổi mật khẩu</h3>
-    <?php if (isset($message)) echo $message; ?>
-    <form action="" autocomplete="off" method="POST">
-        <table class="table_login">
-            <tr>
-                <td>Tài khoản</td>
-                <td><input type="text" name="email" required></td>
-            </tr>
-            <tr>
-                <td>Mật khẩu cũ</td>
-                <td><input type="password" name="password_cu" required></td>
-            </tr>
-            <tr>
-                <td>Mật khẩu mới</td>
-                <td><input type="password" name="password_moi" required></td>
-            </tr>
-            <tr>
-                <td>Xác nhận mật khẩu</td>
-                <td><input type="password" name="password_xacnhan" required></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type="submit" name="doimatkhau" value="Đổi mật khẩu"></td>
-            </tr>
-        </table>
-    </form>
+            <form action="" autocomplete="off" method="POST">
+                <table class="cart-table" border="1" width="50%" style="border-collapse: collapse;">
+                    <tr>
+                        <td>Tài khoản</td>
+                        <td><input type="email" size="50" name="email" required></td>
+                    </tr>
+                    <tr>
+                        <td>Mật khẩu cũ</td>
+                        <td><input type="password" size="50" name="password_cu" required></td>
+                    </tr>
+                    <tr>
+                        <td>Mật khẩu mới</td>
+                        <td><input type="password" size="50" name="password_moi" required></td>
+                    </tr>
+                    <tr>
+                        <td>Nhập lại mật khẩu</td>
+                        <td><input type="password" size="50" name="password_xacnhan" required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <a href="index.php?quanly=dangnhap" class="danh_nhap">Đăng nhập</a>
+                            <input class="action-links delete-btn" type="submit" name="doimatkhau" value="Đổi mật khẩu" style="margin-bottom: 10px;">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
 </div>
-</body>
-</html>

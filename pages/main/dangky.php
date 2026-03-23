@@ -34,50 +34,75 @@
         }
     }
 ?>
-<p class="cart-title">Đăng ký thành viên</p>
 
-<form action="" method="POST">
-    <table class="cart-table" border="1" width="50%" style="border-collapse: collapse;">
-        <tr>
-            <td>Họ và tên</td>
-            <td><input type="text" size="50" name="hovaten" required></td>
-        </tr>
-        <tr>
-            <td>Email</td>
-            <td><input type="email" size="50" name="email" required></td>
-        </tr>
-        <tr>
-            <td>Điện thoại</td>
-            <td><input type="text" size="50" name="dienthoai" required></td>
-        </tr>
-        <tr>
-            <td>Địa chỉ</td>
-            <td><input type="text" size="50" name="diachi" required></td>
-        </tr>
-        <tr>
-            <td>Mật khẩu</td>
-            <td>
-                <input type="password" size="50" name="matkhau"
-                    pattern="(?=.*[A-Za-z]).{9,}"
-                    title="Mật khẩu phải ít nhất 9 ký tự và chứa ít nhất một chữ cái."
-                    required>
-            </td>
-        </tr>
-        <tr>
-            <td>Nhập lại mật khẩu</td>
-            <td>
-                <input type="password" size="50" name="matkhau_laplai"
-                    pattern="(?=.*[A-Za-z]).{9,}"
-                    title="Mật khẩu phải giống với mật khẩu phía trên." 
-                    required>
-            </td>
-        </tr>
-        <tr>
-    <td colspan="2" style="text-align: center;">
-    <a href="index.php?quanly=dangnhap" class="danh_nhap">Đăng nhập</a>
-    <input class="action-links delete-btn" type="submit" name="dangky" value="Đăng ký" style="margin-bottom: 10px;">
-    </td>
-    </tr>
+<style>
+    /* Tăng kích thước textbox và chữ để hiển thị tốt hơn */
+    .cart-table input[type="text"],
+    .cart-table input[type="email"],
+    .cart-table input[type="password"],
+    .cart-table textarea {
+        font-size: 16px;
+        padding: 10px;
+        height: 40px;
+        box-sizing: border-box;
+    }
+    .cart-table .action-links,
+    .cart-table input[type="submit"] {
+        font-size: 16px;
+        padding: 10px 14px;
+    }
+</style>
 
-    </table>
-</form>
+<div class="maincontent">
+    <div class="content">
+        <div class="content_right">
+            <p class="cart-title">Đăng ký thành viên</p>
+
+            <form action="" method="POST">
+                <table class="cart-table" border="1" width="50%" style="border-collapse: collapse;">
+                    <tr>
+                        <td>Họ và tên</td>
+                        <td><input type="text" size="50" name="hovaten" required></td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td><input type="email" size="50" name="email" required></td>
+                    </tr>
+                    <tr>
+                        <td>Điện thoại</td>
+                        <td><input type="text" size="50" name="dienthoai" required></td>
+                    </tr>
+                    <tr>
+                        <td>Địa chỉ</td>
+                        <td><input type="text" size="50" name="diachi" required></td>
+                    </tr>
+                    <tr>
+                        <td>Mật khẩu</td>
+                        <td>
+                            <input type="password" size="50" name="matkhau"
+                                pattern="(?=.*[A-Za-z]).{9,}"
+                                title="Mật khẩu phải ít nhất 9 ký tự và chứa ít nhất một chữ cái."
+                                required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nhập lại mật khẩu</td>
+                        <td>
+                            <input type="password" size="50" name="matkhau_laplai"
+                                pattern="(?=.*[A-Za-z]).{9,}"
+                                title="Mật khẩu phải giống với mật khẩu phía trên." 
+                                required>
+                        </td>
+                    </tr>
+                    <tr>
+                <td colspan="2" style="text-align: center;">
+                <a href="index.php?quanly=dangnhap" class="danh_nhap">Đăng nhập</a>
+                <input class="action-links delete-btn" type="submit" name="dangky" value="Đăng ký" style="margin-bottom: 10px;">
+                </td>
+                </tr>
+
+                </table>
+            </form>
+        </div>
+    </div>
+</div>

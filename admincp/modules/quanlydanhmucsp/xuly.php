@@ -15,7 +15,10 @@ header('Location:../../index.php?action=quanlydanhmucsanpham&query=them');
 }else{
     $id=$_GET['iddanhmuc'];
 $sql_xoa = "DELETE FROM danhmuc WHERE id_danhmuc = '".$id."'";
-mysqli_query($mysqli, $sql_xoa);
+$result = mysqli_query($mysqli, $sql_xoa);
+if(!$result){
+    die('MySQL Error: '.mysqli_error($mysqli));
+}
 header('Location: ../../index.php?action=quanlydanhmucsanpham&query=them');
 }
 ?>
