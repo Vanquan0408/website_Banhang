@@ -11,18 +11,35 @@ if(!isset($_SESSION['dangnhap'])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admincp</title>
-    <link rel="stylesheet" href="css/styleadmincp.css">
+    <link rel="stylesheet" href="css/styleadmincp.css?v=20260324">
 </head>
 <body class="admin-body">
-    <h3 class="title_admin">Welcome to Admincp</h3>
-    <div class="wrapper">
-        <?php
-        include("config/config.php");
-        include("modules/header.php");
-        include("modules/menu.php");
-        include("modules/main.php");
-        include("modules/footer.php");
-        ?>
+    <?php
+    include("config/config.php");
+    ?>
+
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <div class="admin-brand-mark">AD</div>
+                <div class="admin-brand-text">
+                    <div class="admin-brand-title">Admincp</div>
+                    <div class="admin-brand-sub">Quản lý hệ thống</div>
+                </div>
+            </div>
+
+            <?php include("modules/menu.php"); ?>
+        </aside>
+
+        <div class="admin-workspace">
+            <?php include("modules/header.php"); ?>
+
+            <main class="admin-content">
+                <?php
+                include("modules/main.php");
+                ?>
+            </main>
+        </div>
     </div>
 </body>
 </html>

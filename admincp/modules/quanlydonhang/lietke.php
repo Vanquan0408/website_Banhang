@@ -9,13 +9,14 @@ $sql_lietke_dh = "SELECT table_giohang.*,
             ORDER BY table_giohang.id_cart DESC";
 $query_lietke_dh = mysqli_query($mysqli ,$sql_lietke_dh);
 ?>
-<p class="table-title">Liệt kê đơn hàng </p>
+<p class="table-title">Quản lý đơn hàng</p>
+<div class="table-wrap">
 <table class="styled-table" border="1px">
     <tr>
         <th>Id</th>
         <th>Mã đơn hàng </th>
         <th>Tên khách hàng  </th>
-        <th>Đại chỉ  </th>
+        <th>Địa chỉ</th>
         <th>Email  </th>
         <th>Số điện thoại  </th>
         <th>Tình trạng</th>
@@ -28,8 +29,8 @@ $query_lietke_dh = mysqli_query($mysqli ,$sql_lietke_dh);
     ?>
     <tr>
         <td><?php echo $i ?></td>
-        <td><?php echo $row['code_cart'] ?></td>
-        <td><?php echo $row['tenkhachhang'] ?></td>
+        <td><?php echo htmlspecialchars($row['code_cart']) ?></td>
+        <td><?php echo htmlspecialchars($row['tenkhachhang']) ?></td>
         <td><?php
             if (!empty($row['ap'])) {
                 echo htmlspecialchars($row['ap'] . ', ' . $row['xa'] . ', ' . $row['tinh']);
@@ -37,20 +38,22 @@ $query_lietke_dh = mysqli_query($mysqli ,$sql_lietke_dh);
                 echo htmlspecialchars($row['default_diachi']);
             }
         ?></td>
-        <td><?php echo $row['email'] ?></td>
+        <td><?php echo htmlspecialchars($row['email']) ?></td>
         <td><?php echo htmlspecialchars(!empty($row['dienthoai']) ? $row['dienthoai'] : $row['default_dienthoai']); ?></td>
         <td>
             <?php
             if($row['cart_status']==1){
-                echo '<a class="btn delete-btn" href="modules/quanlydonhang/xuly.php?code='.$row['code_cart'].'"> Đơn hàng mới  </a>';
+                echo '<a class="admin-badge admin-badge--new" href="modules/quanlydonhang/xuly.php?code='.htmlspecialchars($row['code_cart']).'">Đơn hàng mới</a>';
             }else{
-                echo '<a class="btn delete-btn">Đã xem</a>';
+                echo '<span class="admin-badge admin-badge--seen">Đã xem</span>';
             }
             
             ?>
         </td>
         <td>
-            <a href="index.php?action=donhang&query=xemdonhang&code=<?php echo $row['code_cart']?>" class="btn delete-btn">Xem đơn hàng</a> 
+            <div class="admin-actions">
+                <a href="index.php?action=donhang&query=xemdonhang&code=<?php echo htmlspecialchars($row['code_cart'])?>" class="btn edit-btn">Xem</a>
+            </div>
 
         </td>
     </tr>
@@ -58,3 +61,4 @@ $query_lietke_dh = mysqli_query($mysqli ,$sql_lietke_dh);
     }
     ?>
 </table>
+</div>

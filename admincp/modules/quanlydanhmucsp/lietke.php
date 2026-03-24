@@ -16,7 +16,7 @@ $query_lietke_danhmucsp = mysqli_query($mysqli ,$sql_lietke_danhmucsp);
     ?>
     <tr>
         <td><?php echo $i ?></td>
-        <td><?php echo $row['tendanhmuc'] ?></td>
+        <td><?php echo htmlspecialchars($row['tendanhmuc']) ?></td>
         <td>
             <a href="modules/quanlydanhmucsp/xuly.php?iddanhmuc=<?php echo $row['id_danhmuc']?>" class="btn delete-btn">Xóa</a> 
             | 

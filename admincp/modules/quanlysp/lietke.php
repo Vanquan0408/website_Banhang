@@ -2,8 +2,9 @@
 $sql_lietke_sp = "SELECT * FROM sanpham,danhmuc WHERE sanpham.id_danhmuc = danhmuc.id_danhmuc  ORDER BY id_sanpham DESC";
 $query_lietke_sp = mysqli_query($mysqli ,$sql_lietke_sp);
 ?>
-<p class="table-title">Liệt kê danh mục sản phẩm </p>
-<table  class="styled-table"style="width=100%" border="1px" style="border-collapse: collapse;">
+<p class="table-title">Liệt kê sản phẩm</p>
+<div class="table-wrap">
+<table class="styled-table" border="1px">
 <tr>
     <th>Id</th>
     <th>Tên sản phẩm</th>
@@ -24,13 +25,13 @@ $query_lietke_sp = mysqli_query($mysqli ,$sql_lietke_sp);
     ?>
     <tr>
         <td><?php echo $i ?></td>
-        <td><?php echo $row ['tensanpham']?></td>
+        <td><?php echo htmlspecialchars($row ['tensanpham'])?></td>
         <td><img src="modules/quanlysp/upload/<?php echo $row ['hinhanh']?>" width = "150px"></td>
         <td><?php echo $row ['giasp']?></td>
         <td><?php echo $row ['soluong']?></td>
-        <td><?php echo $row ['tendanhmuc']?></td>
-        <td><?php echo $row ['masp']?></td>
-        <td><?php echo $row ['tomtat']?></td>
+        <td><?php echo htmlspecialchars($row ['tendanhmuc'])?></td>
+        <td><?php echo htmlspecialchars($row ['masp'])?></td>
+        <td class="td-clamp"><?php echo htmlspecialchars($row ['tomtat'])?></td>
         <td>
     <?php
     if($row['tinhtrang'] == 1){
@@ -42,10 +43,14 @@ $query_lietke_sp = mysqli_query($mysqli ,$sql_lietke_sp);
 </td>
 
         <td>
-            <a class="btn delete-btn" href="modules/quanlysp/xuly.php?idsanpham=<?php echo $row['id_sanpham']?>">Xóa</a> | <a  class="btn edit-btn" href="?action=quanlysp&query=sua&idsanpham=<?php echo $row['id_sanpham']?>">Sửa</a>
+            <div class="admin-actions">
+                <a class="btn delete-btn" href="modules/quanlysp/xuly.php?idsanpham=<?php echo $row['id_sanpham']?>">Xóa</a>
+                <a class="btn edit-btn" href="?action=quanlysp&query=sua&idsanpham=<?php echo $row['id_sanpham']?>">Sửa</a>
+            </div>
         </td>
     </tr>
     <?php
     }
     ?>
 </table>
+</div>

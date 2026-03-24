@@ -26,74 +26,80 @@ $sql_khachhang = "SELECT table_dangky.tenkhachhang,
 $query_khachhang = mysqli_query($mysqli, $sql_khachhang);
 $khachhang = mysqli_fetch_assoc($query_khachhang);
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Hóa đơn</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .invoice-box { width: 80%; margin: auto; padding: 20px; border: 1px solid #ddd; }
-        .invoice-box table { width: 100%; border-collapse: collapse; }
-        .invoice-box table th, .invoice-box table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .print-btn { margin-top: 20px; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer; }
-        .print-btn:hover { background: #218838; }
-    </style>
-</head>
-<body>
-    <div class="invoice-box">
-        <h2>HÓA ĐƠN MUA HÀNG</h2>
-        <p><strong>Khách hàng:</strong> <?php echo htmlspecialchars($khachhang['tenkhachhang']); ?></p>
-        <p><strong>Địa chỉ:</strong> <?php
-            $addr = '';
-            if (!empty($khachhang['order_ap'])) {
-                $addr .= $khachhang['order_ap'];
-                if (!empty($khachhang['order_xa'])) $addr .= ', ' . $khachhang['order_xa'];
-                if (!empty($khachhang['order_tinh'])) $addr .= ', ' . $khachhang['order_tinh'];
-            } else {
-                $addr = $khachhang['default_diachi'];
-            }
-            echo htmlspecialchars($addr);
-        ?></p>
-        <?php if (!empty($khachhang['order_ghichu'])): ?>
-            <p><strong>Ghi chú:</strong> <?php echo htmlspecialchars($khachhang['order_ghichu']); ?></p>
-        <?php endif; ?>
-        <p><strong>Số điện thoại:</strong> <?php
-            echo htmlspecialchars(!empty($khachhang['order_dienthoai']) ?
-                                 $khachhang['order_dienthoai'] :
-                                 $khachhang['default_dienthoai']);
-        ?></p>
-        <p><strong>Email:</strong> <?php echo htmlspecialchars($khachhang['email']); ?></p>
 
-        <table>
-            <tr>
-                <th>STT</th>
-                <th>Tên sản phẩm</th>
-                <th>Số lượng</th>
-                <th>Đơn giá</th>
-                <th>Thành tiền</th>
-            </tr>
-            <?php
-            $i = 0;
-            $tongtien = 0;
-            while ($row = mysqli_fetch_array($query_lietke_dh)) {
-                $i++;
-                $thanhtien = $row['giasp'] * $row['soluongmua'];
-                $tongtien += $thanhtien;
-            ?>
-            <tr>
-                <td><?php echo $i; ?></td>
-                <td><?php echo $row['tensanpham']; ?></td>
-                <td><?php echo $row['soluongmua']; ?></td>
-                <td><?php echo number_format($row['giasp'], 0, ',', '.'); ?> VND</td>
-                <td><?php echo number_format($thanhtien, 0, ',', '.'); ?> VND</td>
-            </tr>
-            <?php } ?>
-            <tr>
-                <td colspan="4"><strong>Tổng tiền:</strong></td>
-                <td><strong><?php echo number_format($tongtien, 0, ',', '.'); ?> VND</strong></td>
-            </tr>
-        </table>
-        <button class="print-btn" onclick="window.print()">In hóa đơn</button>
+<section class="admin-panel admin-panel--page">
+    <div class="admin-page-head">
+        <div>
+            <div class="admin-page-title">Hóa đơn mua hàng</div>
+            <div class="admin-page-sub">Mã đơn: <strong><?php echo htmlspecialchars($code); ?></strong></div>
+        </div>
+        <div class="admin-actions">
+            <a class="btn" href="index.php?action=quanlydonhang&query=lietke">Quay lại</a>
+            <button type="button" class="btn submit-btn" onclick="window.print()">In hóa đơn</button>
+        </div>
     </div>
-</body>
-</html>
+
+    <?php
+        $addr = '';
+        if (!empty($khachhang['order_ap'])) {
+            $addr .= $khachhang['order_ap'];
+            if (!empty($khachhang['order_xa'])) $addr .= ', ' . $khachhang['order_xa'];
+            if (!empty($khachhang['order_tinh'])) $addr .= ', ' . $khachhang['order_tinh'];
+        } else {
+            $addr = $khachhang['default_diachi'];
+        }
+    ?>
+
+    <div class="admin-two-col admin-two-col--details">
+        <div class="admin-panel">
+            <p class="table-title">Thông tin khách hàng</p>
+            <div class="admin-kv">
+                <div class="admin-kv-row"><span class="admin-kv-label">Khách hàng</span><span class="admin-kv-value"><?php echo htmlspecialchars($khachhang['tenkhachhang']); ?></span></div>
+                <div class="admin-kv-row"><span class="admin-kv-label">Số điện thoại</span><span class="admin-kv-value"><?php echo htmlspecialchars(!empty($khachhang['order_dienthoai']) ? $khachhang['order_dienthoai'] : $khachhang['default_dienthoai']); ?></span></div>
+                <div class="admin-kv-row"><span class="admin-kv-label">Email</span><span class="admin-kv-value"><?php echo htmlspecialchars($khachhang['email']); ?></span></div>
+                <div class="admin-kv-row"><span class="admin-kv-label">Địa chỉ</span><span class="admin-kv-value"><?php echo htmlspecialchars($addr); ?></span></div>
+            </div>
+
+            <?php if (!empty($khachhang['order_ghichu'])): ?>
+                <div class="admin-divider"></div>
+                <p class="table-title">Ghi chú</p>
+                <div class="admin-help"><?php echo htmlspecialchars($khachhang['order_ghichu']); ?></div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <p class="table-title">Danh sách sản phẩm</p>
+        <div class="table-wrap">
+            <table class="styled-table" border="1px">
+                <tr>
+                    <th>STT</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+                <?php
+                $i = 0;
+                $tongtien = 0;
+                while ($row = mysqli_fetch_array($query_lietke_dh)) {
+                    $i++;
+                    $thanhtien = $row['giasp'] * $row['soluongmua'];
+                    $tongtien += $thanhtien;
+                ?>
+                <tr>
+                    <td><?php echo $i; ?></td>
+                    <td><?php echo htmlspecialchars($row['tensanpham']); ?></td>
+                    <td><?php echo (int)$row['soluongmua']; ?></td>
+                    <td><?php echo number_format((int)$row['giasp'], 0, ',', '.'); ?> VND</td>
+                    <td><?php echo number_format((int)$thanhtien, 0, ',', '.'); ?> VND</td>
+                </tr>
+                <?php } ?>
+                <tr>
+                    <td colspan="4" style="text-align:right;"><strong>Tổng tiền</strong></td>
+                    <td><strong><?php echo number_format((int)$tongtien, 0, ',', '.'); ?> VND</strong></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</section>

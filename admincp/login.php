@@ -28,7 +28,7 @@ if(isset($_POST['dangnhap'])){
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Đăng nhập Admin</title>
-        <link rel="stylesheet" href="css/styleadmincp.css">
+        <link rel="stylesheet" href="css/styleadmincp.css?v=20260324">
     </head>
 <body class="admin-login-page">
     <div class="admin-login-shell">
