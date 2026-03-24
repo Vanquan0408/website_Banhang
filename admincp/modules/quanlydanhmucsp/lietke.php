@@ -18,9 +18,9 @@ $query_lietke_danhmucsp = mysqli_query($mysqli ,$sql_lietke_danhmucsp);
         <td><?php echo $i ?></td>
         <td><?php echo htmlspecialchars($row['tendanhmuc']) ?></td>
         <td>
-            <a href="modules/quanlydanhmucsp/xuly.php?iddanhmuc=<?php echo $row['id_danhmuc']?>" class="btn delete-btn">Xóa</a> 
+            <a href="modules/quanlydanhmucsp/xuly.php?iddanhmuc=<?php echo (int)$row['id_danhmuc']?>" class="btn delete-btn" onclick="return confirm('Bạn có chắc muốn xóa danh mục này? Nếu còn sản phẩm trong danh mục, không thể xóa.')">Xóa</a>
             | 
-            <a href="?action=quanlydanhmucsanpham&query=sua&iddanhmuc=<?php echo $row['id_danhmuc']?>" class="btn edit-btn">Sửa</a>
+            <a href="?action=quanlydanhmucsanpham&query=sua&iddanhmuc=<?php echo (int)$row['id_danhmuc']?>" class="btn edit-btn">Sửa</a>
         </td>
     </tr>
     <?php

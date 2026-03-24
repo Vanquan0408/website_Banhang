@@ -16,7 +16,16 @@ $query_pro = mysqli_query($mysqli, $sql_pro);
     <?php while ($row = mysqli_fetch_array($query_pro)) { ?>
         <li>
             <a href="index.php?quanly=sanpham&id=<?php echo $row['id_sanpham'] ?>">
-                <img src="admincp/modules/quanlysp/upload/<?php echo $row['hinhanh'] ?>" alt="<?php echo $row['tensanpham'] ?>"/>
+                <?php
+                    $fn = trim($row['hinhanh']);
+                    $serverPath = __DIR__ . '/../../admincp/modules/quanlysp/upload/' . $fn;
+                    if ($fn !== '' && is_file($serverPath)) {
+                        $src = 'admincp/modules/quanlysp/upload/' . rawurlencode($fn);
+                    } else {
+                        $src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+                    }
+                ?>
+                <img src="<?php echo $src ?>" alt="<?php echo htmlspecialchars($row['tensanpham']) ?>" />
                 <p class="title_product">Tên sản phẩm: <?php echo $row['tensanpham'] ?></p>
                 <p class="price_product"><?php echo number_format($row['giasp'], 0, ',', '.') . 'đ' ?></p>
                 <p class="category_product"><?php echo $row['tendanhmuc'] ?></p>
