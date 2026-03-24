@@ -4,6 +4,27 @@ $showCart = true;
 if (isset($_GET['action']) && $_GET['action'] === 'order') {
     if (isset($_SESSION['id_khachhang']) && !empty($_SESSION['cart'])) {
         $id_khachhang = $_SESSION['id_khachhang'];
+
+        // Best-effort DB migration: add detailed order status column for user "Đơn mua"
+        // 1=Chờ thanh toán, 2=Vận chuyển, 3=Chờ giao hàng, 4=Hoàn thành, 5=Đã hủy, 6=Trả hàng/Hoàn tiền
+        $hasOrderStatus = false;
+        try {
+            $qHas = mysqli_query($mysqli, "SHOW COLUMNS FROM table_giohang LIKE 'order_status'");
+            if ($qHas && mysqli_num_rows($qHas) > 0) {
+                $hasOrderStatus = true;
+            }
+        } catch (mysqli_sql_exception $e) {
+            $hasOrderStatus = false;
+        }
+        if (!$hasOrderStatus) {
+            try {
+                mysqli_query($mysqli, "ALTER TABLE table_giohang ADD COLUMN order_status TINYINT NOT NULL DEFAULT 1");
+                $hasOrderStatus = true;
+            } catch (mysqli_sql_exception $e) {
+                $hasOrderStatus = false;
+            }
+        }
+
         $q = mysqli_query($mysqli, "SELECT * FROM table_dangky WHERE id_dangky='$id_khachhang' LIMIT 1");
         $user = mysqli_fetch_assoc($q);
         $ap = $user['ap'] ?? '';
@@ -14,8 +35,18 @@ if (isset($_GET['action']) && $_GET['action'] === 'order') {
         $address = trim(implode(', ', array_filter([$ap, $xa, $tinh])), ', ');
 
         $code_order = rand(1000,9999);
-        $insert_cart = "INSERT INTO table_giohang (id_khachhang, code_cart, cart_status, ap, xa, tinh, ghichu, dienthoai) VALUES ('$id_khachhang','$code_order',1,'$ap','$xa','$tinh','$note','$phone')";
-        mysqli_query($mysqli,$insert_cart);
+        $order_status = 1;
+        if ($hasOrderStatus) {
+            $insert_cart = "INSERT INTO table_giohang (id_khachhang, code_cart, cart_status, order_status, ap, xa, tinh, ghichu, dienthoai) VALUES ('$id_khachhang','$code_order',1,'$order_status','$ap','$xa','$tinh','$note','$phone')";
+            $ok_cart = mysqli_query($mysqli, $insert_cart);
+            if (!$ok_cart) {
+                $insert_cart_legacy = "INSERT INTO table_giohang (id_khachhang, code_cart, cart_status, ap, xa, tinh, ghichu, dienthoai) VALUES ('$id_khachhang','$code_order',1,'$ap','$xa','$tinh','$note','$phone')";
+                mysqli_query($mysqli, $insert_cart_legacy);
+            }
+        } else {
+            $insert_cart_legacy = "INSERT INTO table_giohang (id_khachhang, code_cart, cart_status, ap, xa, tinh, ghichu, dienthoai) VALUES ('$id_khachhang','$code_order',1,'$ap','$xa','$tinh','$note','$phone')";
+            mysqli_query($mysqli, $insert_cart_legacy);
+        }
         $items_html = '<ul class="order-items">';
         foreach($_SESSION['cart'] as $item) {
             $id_pro = isset($item['id']) ? (int)$item['id'] : 0;
@@ -51,6 +82,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'order') {
                     . '<div class="order-success-badge">Mã đơn <strong>' . $safeCode . '</strong></div>'
                 . '</div>'
                 . '<div class="order-success-body">'
+                    . '<div class="cart-tabs" role="tablist" aria-label="Điều hướng">'
+                        . '<a class="cart-tab" href="index.php?quanly=giohang" role="tab">Giỏ hàng</a>'
+                        . '<a class="cart-tab is-active" href="index.php?quanly=donmua" role="tab" aria-selected="true">Đơn mua</a>'
+                    . '</div>'
                     . '<div class="order-kv">'
                         . '<div class="order-kv-row"><span class="order-kv-label">Khách hàng</span><span class="order-kv-value">' . $customer_name . '</span></div>'
                         . '<div class="order-kv-row"><span class="order-kv-label">Số điện thoại</span><span class="order-kv-value">' . $customer_phone . '</span></div>'
@@ -61,7 +96,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'order') {
                     . $items_html
                     . '<div class="order-success-actions">'
                         . '<a class="btn-secondary" href="index.php">Tiếp tục mua sắm</a>'
-                        . '<a class="btn-primary" href="index.php?quanly=giohang">Xem lại giỏ hàng</a>'
+                        . '<a class="btn-primary" href="index.php?quanly=donmua">Xem đơn mua</a>'
                     . '</div>'
                 . '</div>'
             . '</div>';
@@ -88,12 +123,22 @@ if (!empty($_SESSION['order_success'])) {
     unset($_SESSION['order_success']);
     $showCart = false;
 }
+
+// flash message for cart actions (e.g., "mua lại" from Đơn mua)
+$cartFlash = '';
+if (!empty($_SESSION['cart_flash'])) {
+    $cartFlash = '<div class="alert alert-success cart-alert">' . htmlspecialchars((string)$_SESSION['cart_flash']) . '</div>';
+    unset($_SESSION['cart_flash']);
+}
 ?>
 
 <div class="cart-page">
     <?php
     if ($orderMsg !== '') {
         echo $orderMsg;
+    }
+    if ($cartFlash !== '') {
+        echo $cartFlash;
     }
     if ($showCart) {
     ?>
@@ -110,6 +155,10 @@ if (!empty($_SESSION['order_success'])) {
                         echo 'Bạn chưa đăng nhập';
                     }
                     ?>
+                </div>
+                <div class="cart-tabs" role="tablist" aria-label="Điều hướng">
+                    <a class="cart-tab is-active" href="index.php?quanly=giohang" role="tab" aria-selected="true">Giỏ hàng</a>
+                    <a class="cart-tab" href="index.php?quanly=donmua" role="tab">Đơn mua</a>
                 </div>
             </div>
             <a class="btn-secondary cart-continue" href="index.php">Tiếp tục mua sắm</a>

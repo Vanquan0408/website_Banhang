@@ -3,6 +3,25 @@
 
 $code = $_GET['code'];
 
+// Best-effort DB migration for detailed order status (avoid duplicate-column fatal)
+$hasOrderStatus = false;
+try {
+    $qHas = mysqli_query($mysqli, "SHOW COLUMNS FROM table_giohang LIKE 'order_status'");
+    if ($qHas && mysqli_num_rows($qHas) > 0) {
+        $hasOrderStatus = true;
+    }
+} catch (mysqli_sql_exception $e) {
+    $hasOrderStatus = false;
+}
+if (!$hasOrderStatus) {
+    try {
+        mysqli_query($mysqli, "ALTER TABLE table_giohang ADD COLUMN order_status TINYINT NOT NULL DEFAULT 1");
+        $hasOrderStatus = true;
+    } catch (mysqli_sql_exception $e) {
+        $hasOrderStatus = false;
+    }
+}
+
 // Truy vấn thông tin chi tiết đơn hàng
 $sql_lietke_dh = "SELECT * FROM table_chitietdonhang, sanpham 
                    WHERE table_chitietdonhang.id_sanpham = sanpham.id_sanpham
@@ -19,7 +38,8 @@ $sql_khachhang = "SELECT table_dangky.tenkhachhang,
                          table_giohang.xa AS order_xa,
                          table_giohang.tinh AS order_tinh,
                          table_giohang.ghichu AS order_ghichu,
-                         table_giohang.dienthoai AS order_dienthoai
+                         table_giohang.dienthoai AS order_dienthoai,
+                         table_giohang.order_status AS order_status
                   FROM table_giohang
                   JOIN table_dangky ON table_giohang.id_khachhang = table_dangky.id_dangky
                   WHERE table_giohang.code_cart = '$code' LIMIT 1";
@@ -59,6 +79,34 @@ $khachhang = mysqli_fetch_assoc($query_khachhang);
                 <div class="admin-kv-row"><span class="admin-kv-label">Email</span><span class="admin-kv-value"><?php echo htmlspecialchars($khachhang['email']); ?></span></div>
                 <div class="admin-kv-row"><span class="admin-kv-label">Địa chỉ</span><span class="admin-kv-value"><?php echo htmlspecialchars($addr); ?></span></div>
             </div>
+
+            <div class="admin-divider"></div>
+            <p class="table-title">Trạng thái đơn hàng</p>
+            <form method="post" action="modules/quanlydonhang/xuly.php?action=update_order_status&code=<?php echo htmlspecialchars($code); ?>" class="styled-form">
+                <div style="display:grid; gap:10px;">
+                    <label class="form-label">Cập nhật trạng thái</label>
+                    <select name="order_status" class="form-select">
+                        <?php
+                            $cur = isset($khachhang['order_status']) ? (int)$khachhang['order_status'] : 1;
+                            $opts = [
+                                1 => 'Chờ thanh toán',
+                                2 => 'Vận chuyển',
+                                3 => 'Chờ giao hàng',
+                                4 => 'Hoàn thành',
+                                5 => 'Đã hủy',
+                                6 => 'Trả hàng/Hoàn tiền',
+                            ];
+                            foreach ($opts as $k => $v) {
+                                $sel = ($cur === $k) ? 'selected' : '';
+                                echo '<option value="' . (int)$k . '" ' . $sel . '>' . htmlspecialchars($v) . '</option>';
+                            }
+                        ?>
+                    </select>
+                </div>
+                <div class="admin-actions">
+                    <button type="submit" class="btn submit-btn">Lưu trạng thái</button>
+                </div>
+            </form>
 
             <?php if (!empty($khachhang['order_ghichu'])): ?>
                 <div class="admin-divider"></div>
