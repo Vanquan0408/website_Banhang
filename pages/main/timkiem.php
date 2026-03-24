@@ -17,7 +17,16 @@ if(isset($_POST['timkiem'])){
     ?>
         <li>
             <a href="index.php?quanly=sanpham&id=<?php echo $row['id_sanpham']; ?>">
-                <img src="admincp/modules/quanlysp/upload/<?php echo $row['hinhanh']; ?>" />
+                <?php
+                    $fn = trim($row['hinhanh']);
+                    $serverPath = __DIR__ . '/../../admincp/modules/quanlysp/upload/' . $fn;
+                    if ($fn !== '' && is_file($serverPath)) {
+                        $src = 'admincp/modules/quanlysp/upload/' . rawurlencode($fn);
+                    } else {
+                        $src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+                    }
+                ?>
+                <img src="<?php echo $src ?>" alt="<?php echo htmlspecialchars($row['tensanpham']); ?>" />
                 <p class="title_product"><b>Tên sản phẩm:</b> <?php echo $row['tensanpham']; ?></p>
                 <p class="price_product"><?php echo number_format($row['giasp'], 0, ',', '.') . 'đ'; ?></p>
                 <p class="category_product"><b><?php echo $row['tendanhmuc']; ?></b></p>

@@ -8,7 +8,16 @@ while ($row_chitiet = mysqli_fetch_array($query_chitiet)) {
     <div class="wrapper_chitiet">
         <div class="hinhanh_sanpham">
             <div class="product-image-card">
-                <img src="admincp/modules/quanlysp/upload/<?php echo $row_chitiet['hinhanh']; ?>" alt="<?php echo htmlspecialchars($row_chitiet['tensanpham']); ?>" />
+                <?php
+                    $fn = trim($row_chitiet['hinhanh']);
+                    $serverPath = __DIR__ . '/../../admincp/modules/quanlysp/upload/' . $fn;
+                    if ($fn !== '' && is_file($serverPath)) {
+                        $src = 'admincp/modules/quanlysp/upload/' . rawurlencode($fn);
+                    } else {
+                        $src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+                    }
+                ?>
+                <img src="<?php echo $src ?>" alt="<?php echo htmlspecialchars($row_chitiet['tensanpham']); ?>" />
             </div>
         </div>
 

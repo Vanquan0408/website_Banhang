@@ -25,7 +25,16 @@ $row_title = mysqli_fetch_assoc($query_cate);
     <?php while ($row_pro = mysqli_fetch_assoc($query_pro)) { ?>
         <li>
             <a href="index.php?quanly=sanpham&id=<?php echo $row_pro['id_sanpham'] ?>">
-                <img src="admincp/modules/quanlysp/upload/<?php echo $row_pro['hinhanh'] ?>" />
+                <?php
+                    $fn = trim($row_pro['hinhanh']);
+                    $serverPath = __DIR__ . '/../../admincp/modules/quanlysp/upload/' . $fn;
+                    if ($fn !== '' && is_file($serverPath)) {
+                        $src = 'admincp/modules/quanlysp/upload/' . rawurlencode($fn);
+                    } else {
+                        $src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+                    }
+                ?>
+                <img src="<?php echo $src ?>" alt="<?php echo htmlspecialchars($row_pro['tensanpham']) ?>" />
                 <p class="title_product">Tên: <?php echo $row_pro['tensanpham'] ?></p>
                 <p class="price_product"><?php echo number_format($row_pro['giasp'], 0, ',', '.') . 'đ' ?></p>
             </a>

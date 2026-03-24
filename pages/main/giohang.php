@@ -16,19 +16,27 @@ if (isset($_GET['action']) && $_GET['action'] === 'order') {
         $code_order = rand(1000,9999);
         $insert_cart = "INSERT INTO table_giohang (id_khachhang, code_cart, cart_status, ap, xa, tinh, ghichu, dienthoai) VALUES ('$id_khachhang','$code_order',1,'$ap','$xa','$tinh','$note','$phone')";
         mysqli_query($mysqli,$insert_cart);
+        $items_html = '<ul class="order-items">';
         foreach($_SESSION['cart'] as $item) {
             $id_pro = $item['id'];
             $soluong = $item['soluong'];
+            $giasp = isset($item['giasp']) ? (float)$item['giasp'] : 0;
+            $tensp = isset($item['tensanpham']) ? $item['tensanpham'] : '';
             $insert_details = "INSERT INTO table_chitietdonhang (id_sanpham, code_cart, soluongmua) VALUES ('$id_pro','$code_order','$soluong')";
             mysqli_query($mysqli,$insert_details);
+            $items_html .= '<li>' . htmlspecialchars($tensp) . ' — Số lượng: ' . (int)$soluong . ' — Giá: ' . number_format($giasp, 0, ',', '.') . "đ</li>";
         }
+        $items_html .= '</ul>';
+
         unset($_SESSION['cart']);
         $customer_name = htmlspecialchars($user['tenkhachhang']);
         $customer_phone = htmlspecialchars($user['dienthoai']);
-        $_SESSION['order_success'] = "Đặt hàng thành công! Mã đơn: $code_order." .
-                                  "<br>Tên: $customer_name" .
+        $_SESSION['order_success'] = "Đặt hàng thành công! " .
+                                  "<br>Mã đơn: $code_order" .
+                                  "<br>Tên khách hàng: $customer_name" .
                                   "<br>SĐT: $customer_phone" .
-                                  "<br>Địa chỉ: $address";
+                                  "<br>Địa chỉ: $address" .
+                                  "<br><strong>Chi tiết đơn hàng:</strong>" . $items_html;
         header('Location: index.php?quanly=giohang');
         exit();
     } else {
@@ -104,7 +112,16 @@ if (!empty($_SESSION['order_success'])) {
                         <td class="cell-code"><?php echo $cart_item['masp']; ?></td>
                         <td class="cell-name"><?php echo $cart_item['tensanpham']; ?></td>
                         <td>
-                            <img class="cart-img" alt="<?php echo htmlspecialchars($cart_item['tensanpham']); ?>" src="admincp/modules/quanlysp/upload/<?php echo $cart_item['hinhanh']; ?>">
+                            <?php
+                                $fn = trim($cart_item['hinhanh']);
+                                $serverPath = __DIR__ . '/../../admincp/modules/quanlysp/upload/' . $fn;
+                                if ($fn !== '' && is_file($serverPath)) {
+                                    $src = 'admincp/modules/quanlysp/upload/' . rawurlencode($fn);
+                                } else {
+                                    $src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+                                }
+                            ?>
+                            <img class="cart-img" alt="<?php echo htmlspecialchars($cart_item['tensanpham']); ?>" src="<?php echo $src; ?>">
                         </td>
                         <td>
                             <div class="action-links" aria-label="Điều chỉnh số lượng">

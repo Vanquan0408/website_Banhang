@@ -53,6 +53,7 @@ $query_lietke_dh = mysqli_query($mysqli ,$sql_lietke_dh);
         <td>
             <div class="admin-actions">
                 <a href="index.php?action=donhang&query=xemdonhang&code=<?php echo htmlspecialchars($row['code_cart'])?>" class="btn edit-btn">Xem</a>
+                <a href="modules/quanlydonhang/xuly.php?action=delete&code=<?php echo htmlspecialchars($row['code_cart'])?>" class="btn delete-btn" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?')">Xóa</a>
             </div>
 
         </td>

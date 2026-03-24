@@ -26,7 +26,16 @@ $query_lietke_sp = mysqli_query($mysqli ,$sql_lietke_sp);
     <tr>
         <td><?php echo $i ?></td>
         <td><?php echo htmlspecialchars($row ['tensanpham'])?></td>
-        <td><img src="modules/quanlysp/upload/<?php echo $row ['hinhanh']?>" width = "150px"></td>
+        <?php
+            $fn = trim($row['hinhanh']);
+            $serverPath = __DIR__ . '/upload/' . $fn;
+            if ($fn !== '' && is_file($serverPath)) {
+                $src = 'modules/quanlysp/upload/' . rawurlencode($fn);
+            } else {
+                $src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+            }
+        ?>
+        <td><img src="<?php echo $src ?>" width="150" alt="<?php echo htmlspecialchars($row['tensanpham']) ?>"></td>
         <td><?php echo $row ['giasp']?></td>
         <td><?php echo $row ['soluong']?></td>
         <td><?php echo htmlspecialchars($row ['tendanhmuc'])?></td>
