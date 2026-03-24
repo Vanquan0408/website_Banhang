@@ -21,9 +21,8 @@ if(!isset($_SESSION['dangnhap'])){
     <div class="admin-shell">
         <aside class="admin-sidebar">
             <div class="admin-brand">
-                <div class="admin-brand-mark">AD</div>
                 <div class="admin-brand-text">
-                    <div class="admin-brand-title">Admincp</div>
+                    <div class="admin-brand-title">ADMIN</div>
                     <div class="admin-brand-sub">Quản lý hệ thống</div>
                 </div>
             </div>

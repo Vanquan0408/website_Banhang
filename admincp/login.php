@@ -2,9 +2,13 @@
 session_start();
 include('config/config.php');
 
+$login_error = '';
+$form_username = '';
+
 if(isset($_POST['dangnhap'])){
-    $taikhoan = $_POST['username'];
-    $matkhau = md5($_POST['password']);
+    $form_username = trim($_POST['username'] ?? '');
+    $taikhoan = $form_username;
+    $matkhau = md5($_POST['password'] ?? '');
     $stmt = $mysqli->prepare("SELECT * FROM admin WHERE username=? AND password=? LIMIT 1");
     $stmt->bind_param("ss", $taikhoan, $matkhau);
     $stmt->execute();
@@ -16,8 +20,7 @@ if(isset($_POST['dangnhap'])){
         header("Location: index.php");
         exit();
     } else {
-        echo '<script>alert("Tài khoản hoặc mật khẩu sai!"); window.location.href="login.php";</script>';
-        exit();
+        $login_error = 'Tài khoản hoặc mật khẩu không đúng. Vui lòng thử lại.';
     }
 }
 ?>
@@ -42,7 +45,7 @@ if(isset($_POST['dangnhap'])){
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path fill="currentColor" d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2c-4.1 0-7.5 2.2-7.5 5a1 1 0 1 0 2 0c0-1.5 2.5-3 5.5-3s5.5 1.5 5.5 3a1 1 0 1 0 2 0c0-2.8-3.4-5-7.5-5Z"/>
                         </svg>
-                        <input id="admin_username" type="text" name="username" placeholder="Nhập tài khoản" autocomplete="username" required>
+                        <input id="admin_username" type="text" name="username" placeholder="Nhập tài khoản" autocomplete="username" required value="<?php echo htmlspecialchars($form_username); ?>">
                     </div>
                 </div>
 
@@ -59,6 +62,20 @@ if(isset($_POST['dangnhap'])){
                         </button>
                     </div>
                 </div>
+
+                <?php if (!empty($login_error)) { ?>
+                    <div class="admin-alert admin-alert--error" role="alert" aria-live="polite">
+                        <span class="admin-alert-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                                <path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 13a1 1 0 0 1 1 1v0a1 1 0 0 1-2 0v0a1 1 0 0 1 1-1Zm1-8v6a1 1 0 0 1-2 0V7a1 1 0 0 1 2 0Z"/>
+                            </svg>
+                        </span>
+                        <div class="admin-alert-content">
+                            <div class="admin-alert-title">Đăng nhập không thành công</div>
+                            <div class="admin-alert-desc"><?php echo htmlspecialchars($login_error); ?></div>
+                        </div>
+                    </div>
+                <?php } ?>
 
                 <button class="admin-submit" type="submit" name="dangnhap" value="1">Đăng nhập</button>
 

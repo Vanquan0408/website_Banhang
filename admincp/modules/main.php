@@ -33,6 +33,10 @@
               echo '</section>';
        }elseif($tam =='donhang' && $query=='xemdonhang'){
               include('modules/quanlydonhang/xemdonhang.php');
+       }elseif($tam =='taikhoan' && $query=='thongtin'){
+              echo '<section class="admin-panel admin-panel--page">';
+              include('modules/taikhoan/thongtin.php');
+              echo '</section>';
        }else{
               include('modules/dashboard.php');
        }

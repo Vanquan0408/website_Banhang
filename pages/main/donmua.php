@@ -28,18 +28,18 @@ if (!$hasOrderStatus) {
 }
 
 $statusTabs = [
-    ''  => 'Tất cả',
-    '1' => 'Chờ thanh toán',
-    '2' => 'Vận chuyển',
-    '3' => 'Chờ giao hàng',
-    '4' => 'Hoàn thành',
-    '5' => 'Đã hủy',
-    '6' => 'Trả hàng/Hoàn tiền',
+    0 => 'Tất cả',
+    1 => 'Chờ thanh toán',
+    2 => 'Vận chuyển',
+    3 => 'Chờ giao hàng',
+    4 => 'Hoàn thành',
+    5 => 'Đã hủy',
+    6 => 'Trả hàng/Hoàn tiền',
 ];
 
-$st = isset($_GET['st']) ? (string)$_GET['st'] : '';
+$st = isset($_GET['st']) ? (int)$_GET['st'] : 0;
 if (!array_key_exists($st, $statusTabs)) {
-    $st = '';
+    $st = 0;
 }
 
 $flashHtml = '';
@@ -95,7 +95,7 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
         <div class="purchase-tabs" role="tablist" aria-label="Trạng thái đơn mua">
             <?php foreach ($statusTabs as $key => $label) {
                 $active = ($st === $key);
-                $href = 'index.php?quanly=donmua' . ($key !== '' ? ('&st=' . urlencode($key)) : '');
+                $href = 'index.php?quanly=donmua' . ($key !== 0 ? ('&st=' . urlencode((string)$key)) : '');
             ?>
                 <a class="purchase-tab<?php echo $active ? ' is-active' : ''; ?>" href="<?php echo $href; ?>" role="tab" <?php echo $active ? 'aria-selected="true"' : ''; ?>>
                     <?php echo htmlspecialchars($label); ?>
@@ -388,7 +388,7 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
                         LEFT JOIN table_chitietdonhang ct ON g.code_cart = ct.code_cart
                         LEFT JOIN sanpham sp ON ct.id_sanpham = sp.id_sanpham
                         WHERE g.id_khachhang = $customerId
-                    " . ($hasOrderStatus && $st !== '' ? (" AND g.order_status = " . (int)$st) : "") . "
+                    " . ($hasOrderStatus && $st !== 0 ? (" AND g.order_status = " . (int)$st) : "") . "
                         GROUP BY g.id_cart
                         ORDER BY g.id_cart DESC";
                 $q = mysqli_query($mysqli, $sql);
