@@ -187,7 +187,29 @@ $(document).ready(function () {
         }
         showToast((res && res.message) ? res.message : 'Không thể thêm vào giỏ hàng.', true);
       })
-      .fail(function () {
+      .fail(function (xhr) {
+        // jQuery treats non-2xx (401/404/500) as fail even if server returns JSON.
+        var res = null;
+        if (xhr && xhr.responseJSON) {
+          res = xhr.responseJSON;
+        } else if (xhr && typeof xhr.responseText === 'string' && xhr.responseText.trim() !== '') {
+          try {
+            res = JSON.parse(xhr.responseText);
+          } catch (e) {
+            res = null;
+          }
+        }
+
+        if (res && res.redirect) {
+          window.location.href = res.redirect;
+          return;
+        }
+
+        if (res && res.message) {
+          showToast(res.message, true);
+          return;
+        }
+
         showToast('Có lỗi xảy ra, vui lòng thử lại.', true);
       });
   });

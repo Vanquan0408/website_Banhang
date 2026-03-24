@@ -597,6 +597,18 @@ ul.product_list li {
     border: 1px solid var(--border);
 }
 
+.product-card-link {
+    flex: 1 1 auto;
+}
+
+.product-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 12px 14px;
+}
+
 ul.product_list li:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-md);
@@ -645,7 +657,7 @@ ul.product_list li:hover img {
 }
 
 .category_product {
-    margin: 0 12px 14px;
+    margin: 0;
     padding: 6px 10px;
     width: fit-content;
     border-radius: 999px;
@@ -666,12 +678,7 @@ ul.product_list li a:hover {
     opacity: 1;
 }
 
-.product-add-form {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    z-index: 2;
-}
+.product-add-form { margin: 0; }
 
 .product-add-btn {
     appearance: none;
@@ -1627,6 +1634,150 @@ input.themgiohang:active {
     border-color: rgba(34, 197, 94, 0.35);
     background: rgba(34, 197, 94, 0.08);
     color: #166534;
+}
+
+/* ==================== ORDER SUCCESS (after checkout) ==================== */
+.order-success-card {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.order-success-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.10), rgba(var(--brand-2-rgb), 0.10));
+    border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+}
+
+.order-success-title {
+    font-weight: 1000;
+    letter-spacing: 0.2px;
+    color: var(--text);
+    font-size: 1.15rem;
+}
+
+.order-success-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(var(--brand-rgb), 0.25);
+    background: rgba(var(--brand-rgb), 0.08);
+    color: var(--brand);
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.order-success-body {
+    padding: 16px;
+    display: grid;
+    gap: 14px;
+}
+
+.order-kv {
+    display: grid;
+    gap: 10px;
+}
+
+.order-kv-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: rgba(248, 250, 252, 0.7);
+}
+
+.order-kv-label {
+    color: var(--muted);
+    font-weight: 900;
+}
+
+.order-kv-value {
+    color: var(--text);
+    font-weight: 800;
+    word-break: break-word;
+}
+
+.order-kv-empty {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    background: rgba(245, 158, 11, 0.10);
+    color: #92400e;
+    font-weight: 900;
+}
+
+.order-success-hint {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px dashed rgba(148, 163, 184, 0.65);
+    background: rgba(248, 250, 252, 0.65);
+    color: #475569;
+    font-weight: 650;
+}
+
+.order-success-hint a {
+    color: var(--brand);
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.order-success-hint a:hover {
+    text-decoration: underline;
+}
+
+.order-success-section {
+    font-weight: 1000;
+    letter-spacing: 0.2px;
+    color: var(--text);
+}
+
+.order-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.order-items li {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    background: rgba(255, 255, 255, 0.9);
+    color: #334155;
+    font-weight: 650;
+}
+
+.order-success-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 520px) {
+    .order-success-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .order-kv-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 .cart-table input[type="text"],

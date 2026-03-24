@@ -18,25 +18,53 @@ if (isset($_GET['action']) && $_GET['action'] === 'order') {
         mysqli_query($mysqli,$insert_cart);
         $items_html = '<ul class="order-items">';
         foreach($_SESSION['cart'] as $item) {
-            $id_pro = $item['id'];
-            $soluong = $item['soluong'];
+            $id_pro = isset($item['id']) ? (int)$item['id'] : 0;
+            $soluong = isset($item['soluong']) ? (int)$item['soluong'] : 0;
             $giasp = isset($item['giasp']) ? (float)$item['giasp'] : 0;
             $tensp = isset($item['tensanpham']) ? $item['tensanpham'] : '';
             $insert_details = "INSERT INTO table_chitietdonhang (id_sanpham, code_cart, soluongmua) VALUES ('$id_pro','$code_order','$soluong')";
-            mysqli_query($mysqli,$insert_details);
+            $ok_details = mysqli_query($mysqli,$insert_details);
+
+            // Giảm số lượng tồn kho sau khi đặt hàng
+            if ($ok_details && $id_pro > 0 && $soluong > 0) {
+                $update_stock = "UPDATE sanpham SET soluong = CASE WHEN soluong >= $soluong THEN (soluong - $soluong) ELSE 0 END WHERE id_sanpham = $id_pro";
+                mysqli_query($mysqli, $update_stock);
+            }
             $items_html .= '<li>' . htmlspecialchars($tensp) . ' — Số lượng: ' . (int)$soluong . ' — Giá: ' . number_format($giasp, 0, ',', '.') . "đ</li>";
         }
         $items_html .= '</ul>';
 
         unset($_SESSION['cart']);
-        $customer_name = htmlspecialchars($user['tenkhachhang']);
-        $customer_phone = htmlspecialchars($user['dienthoai']);
-        $_SESSION['order_success'] = "Đặt hàng thành công! " .
-                                  "<br>Mã đơn: $code_order" .
-                                  "<br>Tên khách hàng: $customer_name" .
-                                  "<br>SĐT: $customer_phone" .
-                                  "<br>Địa chỉ: $address" .
-                                  "<br><strong>Chi tiết đơn hàng:</strong>" . $items_html;
+        $customer_name = htmlspecialchars($user['tenkhachhang'] ?? '');
+        $customer_phone = htmlspecialchars($user['dienthoai'] ?? '');
+        if (trim((string)$address) === '') {
+            $safeAddressHtml = '<span class="order-kv-empty">Chưa cập nhật</span>';
+        } else {
+            $safeAddressHtml = htmlspecialchars((string)$address);
+        }
+        $safeCode = htmlspecialchars((string)$code_order);
+
+        $_SESSION['order_success'] =
+            '<div class="order-success-card">'
+                . '<div class="order-success-head">'
+                    . '<div class="order-success-title">Đặt hàng thành công</div>'
+                    . '<div class="order-success-badge">Mã đơn <strong>' . $safeCode . '</strong></div>'
+                . '</div>'
+                . '<div class="order-success-body">'
+                    . '<div class="order-kv">'
+                        . '<div class="order-kv-row"><span class="order-kv-label">Khách hàng</span><span class="order-kv-value">' . $customer_name . '</span></div>'
+                        . '<div class="order-kv-row"><span class="order-kv-label">Số điện thoại</span><span class="order-kv-value">' . $customer_phone . '</span></div>'
+                        . '<div class="order-kv-row"><span class="order-kv-label">Địa chỉ</span><span class="order-kv-value">' . $safeAddressHtml . '</span></div>'
+                    . '</div>'
+                    . (trim((string)$address) === '' ? '<div class="order-success-hint">Bạn có thể cập nhật địa chỉ tại <a href="index.php?quanly=thaydoidiachi">Thay đổi địa chỉ</a>.</div>' : '')
+                    . '<div class="order-success-section">Chi tiết đơn hàng</div>'
+                    . $items_html
+                    . '<div class="order-success-actions">'
+                        . '<a class="btn-secondary" href="index.php">Tiếp tục mua sắm</a>'
+                        . '<a class="btn-primary" href="index.php?quanly=giohang">Xem lại giỏ hàng</a>'
+                    . '</div>'
+                . '</div>'
+            . '</div>';
         header('Location: index.php?quanly=giohang');
         exit();
     } else {
@@ -52,7 +80,11 @@ $orderMsg = '';
 if (!empty($_SESSION['order_success'])) {
     $rawMsg = (string)$_SESSION['order_success'];
     $isError = stripos($rawMsg, 'cần đăng nhập') !== false;
-    $orderMsg = '<div class="alert ' . ($isError ? 'alert-error' : 'alert-success') . ' cart-alert">' . $rawMsg . '</div>';
+    if ($isError) {
+        $orderMsg = '<div class="alert alert-error cart-alert">' . $rawMsg . '</div>';
+    } else {
+        $orderMsg = '<div class="cart-alert">' . $rawMsg . '</div>';
+    }
     unset($_SESSION['order_success']);
     $showCart = false;
 }

@@ -7,6 +7,10 @@ $isAjax = (isset($_GET['ajax']) && $_GET['ajax'] == '1')
     || (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
 
 function respond_json($payload, $status = 200) {
+    // Ensure clean JSON even if some included file accidentally echoed output
+    if (function_exists('ob_get_length') && ob_get_length() !== false) {
+        @ob_clean();
+    }
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($payload);
@@ -147,6 +151,14 @@ if (isset($_POST['themgiohang'])) {
 
     header('Location: ../../index.php?quanly=giohang');
     exit();
+}
+
+// Fallback: never return empty body for ajax calls
+if ($isAjax) {
+    respond_json([
+        'ok' => false,
+        'message' => 'Yêu cầu không hợp lệ.'
+    ], 400);
 }
 
 ?>

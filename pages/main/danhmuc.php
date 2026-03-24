@@ -3,7 +3,7 @@ $id_danhmuc = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $page = isset($_GET['trang']) ? (int)$_GET['trang'] : 1;
 $page = max(1, $page); 
 
-$limit = 10000; 
+$limit = 12;
 $begin = ($page - 1) * $limit;
 
 
@@ -20,7 +20,7 @@ $query_cate = mysqli_query($mysqli, $sql_cate);
 $row_title = mysqli_fetch_assoc($query_cate);
 ?>
 
-<h3 class="cart-title">Danh mục sản phẩm: <?php echo $row_title['tendanhmuc'] ?></h3>
+<h3 class="cart-title">Danh mục sản phẩm: <?php echo htmlspecialchars($row_title['tendanhmuc'] ?? ''); ?></h3>
 <ul class="product_list">
     <?php while ($row_pro = mysqli_fetch_assoc($query_pro)) { ?>
         <li>
@@ -50,4 +50,25 @@ $row_trang = mysqli_fetch_assoc($sql_trang);
 $total_records = $row_trang['total'];
 $total_pages = ceil($total_records / $limit);
 ?>
+
+<?php if ($total_pages > 1) { ?>
+    <?php $baseUrl = 'index.php?quanly=danhmucsanpham&id=' . $id_danhmuc . '&trang='; ?>
+    <ul class="list_trang">
+        <?php if ($page > 1): ?>
+            <li><a href="<?php echo $baseUrl; ?>1">«</a></li>
+            <li><a href="<?php echo $baseUrl . ($page - 1); ?>">‹</a></li>
+        <?php endif; ?>
+
+        <?php for ($i = max(1, $page - 2); $i <= min($total_pages, $page + 2); $i++): ?>
+            <li class="<?php echo ($i == $page) ? 'is-active' : ''; ?>">
+                <a href="<?php echo $baseUrl . $i; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
+
+        <?php if ($page < $total_pages): ?>
+            <li><a href="<?php echo $baseUrl . ($page + 1); ?>">›</a></li>
+            <li><a href="<?php echo $baseUrl . $total_pages; ?>">»</a></li>
+        <?php endif; ?>
+    </ul>
+<?php } ?>
 
