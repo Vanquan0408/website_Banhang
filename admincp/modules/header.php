@@ -1,7 +1,8 @@
 <?php
     if(isset($_GET['dangxuat'])&&$_GET['dangxuat']==1){
-        unset($_SESSION['dangnhap']);
-        header('Location:login.php');
+        // Clear server session then redirect. Client-side will clear sessionStorage on click.
+        header('Location: logout.php?redirect=1');
+        exit();
     }
 ?>
 <header class="admin-topbar" role="banner">
@@ -48,6 +49,14 @@
 
 <script>
 (function(){
+    // Clear per-tab marker on logout click
+    var logoutLink = document.querySelector('.admincp_logout');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function(){
+            try { sessionStorage.removeItem('admincp_tab_alive_v1'); } catch (e) {}
+        });
+    }
+
     var input = document.getElementById('adminTopbarSearch');
     if (input) {
         input.addEventListener('input', function(){

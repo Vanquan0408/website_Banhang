@@ -4,11 +4,6 @@
     $query_danhmuc = mysqli_query($mysqli,$sql_danhmuc);
 
 ?>
-<?php
-if(isset($_GET['dangxuat'])&&$_GET['dangxuat']==1){
-    unset($_SESSION['dangky']);
-}
-?>
 <div class="menu">
     <div class="container menu-inner">
         <ul class="list_menu">

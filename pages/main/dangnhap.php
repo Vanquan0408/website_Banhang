@@ -1,29 +1,37 @@
 
 <?php
+    $login_message = '';
+    $login_redirect = '';
+
     if(isset($_POST['dangnhap'])){
-        $email = $_POST['email'];
-        $matkhau = $_POST['password'];
+        $email = trim($_POST['email'] ?? '');
+        $matkhau = (string)($_POST['password'] ?? '');
 
         // Lấy dữ liệu người dùng theo email
-        $sql = "SELECT * FROM table_dangky WHERE email='".$email."' LIMIT 1";
-        $query = mysqli_query($mysqli, $sql);
-        $count = mysqli_num_rows($query);
+        $stmt = $mysqli->prepare('SELECT * FROM table_dangky WHERE email=? LIMIT 1');
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $query = $stmt->get_result();
+        $count = $query ? $query->num_rows : 0;
 
         if($count > 0){
-            $row_data = mysqli_fetch_array($query);
+            $row_data = $query->fetch_assoc();
 
             // So sánh mật khẩu người dùng nhập với mật khẩu đã mã hóa
-            if(password_verify($matkhau, $row_data['matkhau'])){
+            if($row_data && password_verify($matkhau, $row_data['matkhau'])){
                 $_SESSION['dangky'] = $row_data['tenkhachhang'];
-                $_SESSION['id_khachhang'] = $row_data['id_dangky'];            
-                header("Location:index.php");
-                exit;
+                $_SESSION['id_khachhang'] = $row_data['id_dangky'];
+
+                $login_message = '<div class="alert alert-success">Đăng nhập thành công. Đang chuyển trang...</div>';
+                $login_redirect = 'index.php';
             } else {
-                echo '<div class="alert alert-error">Mật khẩu không đúng. Vui lòng thử lại.</div>';
+                $login_message = '<div class="alert alert-error">Mật khẩu không đúng. Vui lòng thử lại.</div>';
             }
         } else {
-            echo '<div class="alert alert-error">Tài khoản không tồn tại.</div>';
+            $login_message = '<div class="alert alert-error">Tài khoản không tồn tại.</div>';
         }
+
+        if (isset($stmt) && $stmt) { $stmt->close(); }
     }
 ?>
 
@@ -40,6 +48,12 @@
                         <div class="auth-subtitle">Chào mừng bạn quay lại. Đăng nhập để mua hàng nhanh hơn.</div>
                     </div>
                 </div>
+
+                <?php
+                    if (!empty($login_message)) {
+                        echo $login_message;
+                    }
+                ?>
 
                 <form action="" autocomplete="on" method="POST" class="auth-form">
                     <div class="auth-grid is-single">
@@ -81,3 +95,11 @@
         </div>
     </div>
 </div>
+
+<?php if (!empty($login_redirect)) { ?>
+<script>
+    setTimeout(function(){
+        window.location.href = <?php echo json_encode($login_redirect); ?>;
+    }, 900);
+</script>
+<?php } ?>

@@ -112,11 +112,6 @@ $displayUsername = $adminRow ? (string)$adminRow['username'] : $currentUsername;
 
 <?php if ($notice !== '') { ?>
     <div class="admin-alert <?php echo ($noticeType === 'success') ? 'admin-alert--success' : (($noticeType === 'info') ? 'admin-alert--info' : 'admin-alert--error'); ?>" role="alert" aria-live="polite">
-        <span class="admin-alert-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                <path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 13a1 1 0 0 1 1 1v0a1 1 0 0 1-2 0v0a1 1 0 0 1 1-1Zm1-8v6a1 1 0 0 1-2 0V7a1 1 0 0 1 2 0Z"/>
-            </svg>
-        </span>
         <div class="admin-alert-content">
             <div class="admin-alert-title"><?php echo ($noticeType === 'success') ? 'Thành công' : (($noticeType === 'info') ? 'Thông báo' : 'Có lỗi'); ?></div>
             <div class="admin-alert-desc"><?php echo htmlspecialchars($notice); ?></div>

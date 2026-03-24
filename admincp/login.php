@@ -3,6 +3,7 @@ session_start();
 include('config/config.php');
 
 $login_error = '';
+$login_success = '';
 $form_username = '';
 
 if(isset($_POST['dangnhap'])){
@@ -17,8 +18,11 @@ if(isset($_POST['dangnhap'])){
 
     if($count > 0){
         $_SESSION['dangnhap'] = $taikhoan;
-        header("Location: index.php");
-        exit();
+        // Allow the first admin page load to set the per-tab marker in sessionStorage
+        $_SESSION['admin_just_logged_in'] = 1;
+
+        // UX: show success message on login UI, then redirect
+        $login_success = 'Đăng nhập thành công. Đang chuyển vào trang quản trị...';
     } else {
         $login_error = 'Tài khoản hoặc mật khẩu không đúng. Vui lòng thử lại.';
     }
@@ -30,7 +34,7 @@ if(isset($_POST['dangnhap'])){
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Đăng nhập Admin</title>
+        <title>Đăng nhập Admin | Website Bán Hàng</title>
         <link rel="stylesheet" href="css/styleadmincp.css?v=20260324">
     </head>
 <body class="admin-login-page">
@@ -65,11 +69,6 @@ if(isset($_POST['dangnhap'])){
 
                 <?php if (!empty($login_error)) { ?>
                     <div class="admin-alert admin-alert--error" role="alert" aria-live="polite">
-                        <span class="admin-alert-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                                <path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 13a1 1 0 0 1 1 1v0a1 1 0 0 1-2 0v0a1 1 0 0 1 1-1Zm1-8v6a1 1 0 0 1-2 0V7a1 1 0 0 1 2 0Z"/>
-                            </svg>
-                        </span>
                         <div class="admin-alert-content">
                             <div class="admin-alert-title">Đăng nhập không thành công</div>
                             <div class="admin-alert-desc"><?php echo htmlspecialchars($login_error); ?></div>
@@ -77,7 +76,16 @@ if(isset($_POST['dangnhap'])){
                     </div>
                 <?php } ?>
 
-                <button class="admin-submit" type="submit" name="dangnhap" value="1">Đăng nhập</button>
+                <?php if (!empty($login_success)) { ?>
+                    <div class="admin-alert admin-alert--success" role="status" aria-live="polite">
+                        <div class="admin-alert-content">
+                            <div class="admin-alert-title">Thành công</div>
+                            <div class="admin-alert-desc"><?php echo htmlspecialchars($login_success); ?></div>
+                        </div>
+                    </div>
+                <?php } ?>
+
+                <button class="admin-submit" type="submit" name="dangnhap" value="1" <?php echo !empty($login_success) ? 'disabled' : ''; ?>>Đăng nhập</button>
 
                 <div class="admin-login-footer">
                     <a href="../index.php">← Về trang bán hàng</a>
@@ -100,6 +108,14 @@ if(isset($_POST['dangnhap'])){
                 toggle.classList.toggle('is-on', isPassword);
                 toggle.setAttribute('aria-pressed', isPassword ? 'true' : 'false');
             });
+        })();
+
+        (function(){
+            var isSuccess = <?php echo !empty($login_success) ? 'true' : 'false'; ?>;
+            if (!isSuccess) return;
+            setTimeout(function(){
+                window.location.href = 'index.php';
+            }, 600);
         })();
     </script>
 </body>

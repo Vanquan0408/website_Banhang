@@ -648,6 +648,14 @@ ul.product_list li:hover img {
     overflow: hidden;
 }
 
+.sold_product {
+    margin: 0;
+    padding: 6px 12px 0;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 0.9em;
+}
+
 .price_product {
     font-size: 1.25em;
     color: var(--brand);
@@ -2113,6 +2121,18 @@ input.themgiohang:active {
     border-radius: 12px;
     border: 1px solid rgba(226, 232, 240, 0.95);
     background: rgba(248, 250, 252, 0.75);
+}
+
+.purchase-item-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.purchase-item-sold {
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 0.9rem;
 }
 
 @media (max-width: 720px) {

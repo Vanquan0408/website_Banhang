@@ -20,7 +20,7 @@
             </div>
 
             <div>
-                <div class="footer-title">Liên hệ</div>
+                <div class="footer-title">Liên hệ: tchc.dhtd@gmail.com</div>
                 <ul class="footer-links">
                     <li><a href="tel:0939861759">Hotline: 0939 861 759</a></li>
                     <li><a href="https://www.facebook.com/van.quan.453147" target="_blank" rel="noopener">Facebook</a></li>
@@ -33,5 +33,5 @@
         </div>
     </div>
 
-    <div class="footer-bottom">© 2024 Cửa hàng bán hàng online. All rights reserved.</div>
+    <div class="footer-bottom">2026 Website bán hàng online. Thiết kế & phát triển bởi Văn Quân & Thanh Nhựt</div>
 </div>

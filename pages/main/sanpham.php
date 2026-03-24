@@ -1,7 +1,22 @@
 <p class="cart-title">Chi tiết sản phẩm</P>
 <?php
- $sql_chitiet= "SELECT * FROM sanpham, danhmuc WHERE sanpham.id_danhmuc = danhmuc.id_danhmuc AND sanpham.id_sanpham = '$_GET[id]' LIMIT 1";
-$query_chitiet = mysqli_query($mysqli, $sql_chitiet);
+ $id_sanpham = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+ $sql_chitiet = "SELECT sp.*, dm.*, COALESCE(sold.sold_qty, 0) AS sold_qty
+                FROM sanpham sp
+                INNER JOIN danhmuc dm ON sp.id_danhmuc = dm.id_danhmuc
+                LEFT JOIN (
+                    SELECT id_sanpham, SUM(soluongmua) AS sold_qty
+                    FROM table_chitietdonhang
+                    GROUP BY id_sanpham
+                ) sold ON sold.id_sanpham = sp.id_sanpham
+                WHERE sp.id_sanpham = ?
+                LIMIT 1";
+
+ $stmt = mysqli_prepare($mysqli, $sql_chitiet);
+ mysqli_stmt_bind_param($stmt, 'i', $id_sanpham);
+ mysqli_stmt_execute($stmt);
+ $query_chitiet = mysqli_stmt_get_result($stmt);
 while ($row_chitiet = mysqli_fetch_array($query_chitiet)) {
 ?>
 <div class="product-detail">
@@ -33,6 +48,7 @@ while ($row_chitiet = mysqli_fetch_array($query_chitiet)) {
                         <?php } else { ?>
                             <span class="badge badge-stock is-out">Hết hàng</span>
                         <?php } ?>
+                        <span class="badge">Đã bán: <?php echo (int)$row_chitiet['sold_qty']; ?></span>
                     </div>
 
                     <h1 class="product-title"><?php echo htmlspecialchars($row_chitiet['tensanpham']); ?></h1>
@@ -62,5 +78,8 @@ while ($row_chitiet = mysqli_fetch_array($query_chitiet)) {
     </div>
 </div>
 <?php
+}
+if (isset($stmt) && $stmt) {
+    mysqli_stmt_close($stmt);
 }
 ?>

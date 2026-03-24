@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['dangnhap'])) {
+    header('Location: ../../login.php');
+    exit();
+}
 include('../../config/config.php');
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['code'])) {
     $code_cart = $_GET['code'];

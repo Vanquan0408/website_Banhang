@@ -1,7 +1,7 @@
 <div class="header">
     <div class="container header-inner">
         <a class="brand" href="index.php" style="text-decoration:none;">
-            <div class="brand-mark">BH</div>
+            <div class="brand-mark">QN</div>
             <div>
                 <div class="brand-title">Website Bán Hàng</div>
                 <div class="brand-subtitle">Mua sắm nhanh • Giá tốt • Giao diện hiện đại</div>

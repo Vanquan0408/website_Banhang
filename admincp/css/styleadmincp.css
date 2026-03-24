@@ -167,6 +167,10 @@ html, body {
     color: var(--danger);
 }
 
+.admin-alert--error .admin-alert-desc {
+    color: var(--danger);
+}
+
 .admin-alert--success {
     border-color: rgba(var(--brand-rgb), 0.18);
 }
@@ -177,7 +181,11 @@ html, body {
 }
 
 .admin-alert--success .admin-alert-title {
-    color: #075985;
+    color: #16a34a;
+}
+
+.admin-alert--success .admin-alert-desc {
+    color: #16a34a;
 }
 
 .admin-alert--info {

@@ -8,7 +8,12 @@ $limit = 12;
 $begin = ($page - 1) * $limit;
 
 
-$sql_pro = "SELECT * FROM sanpham INNER JOIN danhmuc ON sanpham.id_danhmuc = danhmuc.id_danhmuc 
+$sql_pro = "SELECT sanpham.*, danhmuc.tendanhmuc,
+                (SELECT COALESCE(SUM(ct.soluongmua), 0)
+                 FROM table_chitietdonhang ct
+                 WHERE ct.id_sanpham = sanpham.id_sanpham) AS sold
+            FROM sanpham
+            INNER JOIN danhmuc ON sanpham.id_danhmuc = danhmuc.id_danhmuc
             ORDER BY sanpham.id_sanpham DESC LIMIT $begin, $limit";
 $query_pro = mysqli_query($mysqli, $sql_pro);
 ?>
@@ -26,7 +31,8 @@ $query_pro = mysqli_query($mysqli, $sql_pro);
                     }
                 ?>
                 <img src="<?php echo $src ?>" alt="<?php echo htmlspecialchars($row['tensanpham']) ?>" />
-                <p class="title_product">Tên sản phẩm: <?php echo $row['tensanpham'] ?></p>
+                <p class="title_product"><?php echo htmlspecialchars($row['tensanpham']); ?></p>
+                <p class="sold_product">Đã bán: <?php echo (int)($row['sold'] ?? 0); ?></p>
                 <p class="price_product"><?php echo number_format($row['giasp'], 0, ',', '.') . 'đ' ?></p>
             </a>
 

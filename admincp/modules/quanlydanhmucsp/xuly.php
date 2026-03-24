@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['dangnhap'])) {
+    header('Location: ../../login.php');
+    exit();
+}
 include('../../config/config.php');
 $tenloaisp = mysqli_real_escape_string($mysqli, $_POST['tendanhmuc']);
 $thutu = (int) $_POST['thutu'];

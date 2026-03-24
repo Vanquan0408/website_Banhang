@@ -155,9 +155,15 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
                         } elseif ($action === 'rebuy') {
                             // Only allow repurchase for completed or canceled
                             if (!$hasOrderStatus || in_array($orderStatus, [4, 5], true)) {
-                                $itemsSql = "SELECT sanpham.id_sanpham, sanpham.tensanpham, sanpham.giasp, sanpham.hinhanh, sanpham.masp, table_chitietdonhang.soluongmua
+                                $itemsSql = "SELECT sanpham.id_sanpham, sanpham.tensanpham, sanpham.giasp, sanpham.hinhanh, sanpham.masp, table_chitietdonhang.soluongmua,
+                                                    COALESCE(sold.sold, 0) AS sold
                                             FROM table_chitietdonhang
                                             JOIN sanpham ON table_chitietdonhang.id_sanpham = sanpham.id_sanpham
+                                            LEFT JOIN (
+                                                SELECT id_sanpham, SUM(soluongmua) AS sold
+                                                FROM table_chitietdonhang
+                                                GROUP BY id_sanpham
+                                            ) sold ON sold.id_sanpham = sanpham.id_sanpham
                                             WHERE table_chitietdonhang.code_cart = '$codeSafe'
                                             ORDER BY table_chitietdonhang.id_cart_details DESC";
                                 $qItems = mysqli_query($mysqli, $itemsSql);
@@ -242,6 +248,11 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
                     $itemsSql = "SELECT sanpham.tensanpham, sanpham.giasp, sanpham.hinhanh, sanpham.masp, table_chitietdonhang.soluongmua
                                 FROM table_chitietdonhang
                                 JOIN sanpham ON table_chitietdonhang.id_sanpham = sanpham.id_sanpham
+                                LEFT JOIN (
+                                    SELECT id_sanpham, SUM(soluongmua) AS sold
+                                    FROM table_chitietdonhang
+                                    GROUP BY id_sanpham
+                                ) sold ON sold.id_sanpham = sanpham.id_sanpham
                                 WHERE table_chitietdonhang.code_cart = '$codeSafe'
                                 ORDER BY table_chitietdonhang.id_cart_details DESC";
                     $qItems = mysqli_query($mysqli, $itemsSql);
@@ -323,7 +334,12 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
                                     <td>
                                         <img class="purchase-item-img" alt="<?php echo htmlspecialchars((string)$row['tensanpham']); ?>" src="<?php echo $imgSrc; ?>">
                                     </td>
-                                    <td class="cell-name"><?php echo htmlspecialchars((string)$row['tensanpham']); ?></td>
+                                    <td class="cell-name">
+                                        <div class="purchase-item-name">
+                                            <div><?php echo htmlspecialchars((string)$row['tensanpham']); ?></div>
+                                            <div class="purchase-item-sold">Đã bán: <?php echo (int)($row['sold'] ?? 0); ?></div>
+                                        </div>
+                                    </td>
                                     <td><?php echo $qty; ?></td>
                                     <td class="cart-price"><?php echo number_format((int)$price, 0, ',', '.'); ?>đ</td>
                                     <td class="cart-total"><?php echo number_format((int)$lineTotal, 0, ',', '.'); ?>đ</td>
