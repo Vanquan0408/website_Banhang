@@ -21,6 +21,16 @@ $query_pro = mysqli_query($mysqli, $sql_pro);
                 <p class="price_product"><?php echo number_format($row['giasp'], 0, ',', '.') . 'đ' ?></p>
                 <p class="category_product"><?php echo $row['tendanhmuc'] ?></p>
             </a>
+
+            <form class="product-add-form js-add-to-cart-form" method="POST" action="pages/main/themgiohang.php">
+                <input type="hidden" name="idsanpham" value="<?php echo (int)$row['id_sanpham']; ?>">
+                <button class="product-add-btn" type="submit" name="themgiohang" value="1" aria-label="Thêm vào giỏ hàng">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path fill="currentColor" d="M7 18a2 2 0 1 0 0 4a2 2 0 0 0 0-4Zm10 0a2 2 0 1 0 0 4a2 2 0 0 0 0-4ZM6.2 6l.3 2h13.8a1 1 0 0 1 .98 1.2l-1.2 6A2 2 0 0 1 18.14 17H7.2a2 2 0 0 1-1.97-1.65L3.28 3H2a1 1 0 1 1 0-2h2.1a1 1 0 0 1 .98.8L5.6 4H21a1 1 0 1 1 0 2H6.2Z"/>
+                        <path fill="currentColor" d="M12 7a1 1 0 0 1 1 1v2h2a1 1 0 1 1 0 2h-2v2a1 1 0 1 1-2 0v-2H9a1 1 0 1 1 0-2h2V8a1 1 0 0 1 1-1Z"/>
+                    </svg>
+                </button>
+            </form>
         </li>
     <?php } ?>
 </ul>

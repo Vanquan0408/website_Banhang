@@ -142,6 +142,55 @@ $(document).ready(function () {
       closeUserMenus();
     }
   });
+
+  function showToast(message, isError) {
+    var $toast = $('#site-toast');
+    if ($toast.length === 0) {
+      $toast = $('<div id="site-toast" class="site-toast" role="status" aria-live="polite"></div>');
+      $('body').append($toast);
+    }
+
+    $toast.removeClass('is-error is-success is-show');
+    $toast.addClass(isError ? 'is-error' : 'is-success');
+    $toast.text(message || '');
+
+    // force reflow so animation re-triggers
+    void $toast[0].offsetWidth;
+    $toast.addClass('is-show');
+
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(function () {
+      $toast.removeClass('is-show');
+    }, 2200);
+  }
+
+  // AJAX: add to cart from product list (icon button)
+  $(document).on('submit', '.js-add-to-cart-form', function (e) {
+    e.preventDefault();
+    var $form = $(this);
+    var url = $form.attr('action') || 'pages/main/themgiohang.php';
+
+    $.ajax({
+      url: url + '?ajax=1',
+      method: 'POST',
+      data: $form.serialize(),
+      dataType: 'json'
+    })
+      .done(function (res) {
+        if (res && res.ok) {
+          showToast(res.message || 'Thêm vào giỏ hàng thành công.');
+          return;
+        }
+        if (res && res.redirect) {
+          window.location.href = res.redirect;
+          return;
+        }
+        showToast((res && res.message) ? res.message : 'Không thể thêm vào giỏ hàng.', true);
+      })
+      .fail(function () {
+        showToast('Có lỗi xảy ra, vui lòng thử lại.', true);
+      });
+  });
   
 
 });

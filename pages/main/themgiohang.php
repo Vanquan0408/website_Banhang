@@ -2,6 +2,16 @@
 session_start();
 
 include('../../admincp/config/config.php');
+
+$isAjax = (isset($_GET['ajax']) && $_GET['ajax'] == '1')
+    || (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+
+function respond_json($payload, $status = 200) {
+    http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($payload);
+    exit();
+}
 // them so luong 
 if(isset($_GET['cong'])){
     $id=$_GET['cong'];
@@ -70,7 +80,14 @@ if(isset($_GET['xoatatca'])&&$_GET['xoatatca']==1){
 if (isset($_POST['themgiohang'])) {
     // Kiểm tra nếu người dùng chưa đăng nhập
     if (!isset($_SESSION['dangky'])) {
-        // Chuyển hướng đến trang đăng ký
+        if ($isAjax) {
+            respond_json([
+                'ok' => false,
+                'redirect' => 'index.php?quanly=dangky',
+                'message' => 'Vui lòng đăng nhập để thêm vào giỏ hàng.'
+            ], 401);
+        }
+
         header('Location: ../../index.php?quanly=dangky');
         exit();
     }
@@ -112,6 +129,20 @@ if (isset($_POST['themgiohang'])) {
         } else {
             $_SESSION['cart'][] = $new_product; // Nếu giỏ hàng trống, thêm sản phẩm đầu tiên
         }
+    } else {
+        if ($isAjax) {
+            respond_json([
+                'ok' => false,
+                'message' => 'Không tìm thấy sản phẩm.'
+            ], 404);
+        }
+    }
+
+    if ($isAjax) {
+        respond_json([
+            'ok' => true,
+            'message' => 'Thêm vào giỏ hàng thành công.'
+        ]);
     }
 
     header('Location: ../../index.php?quanly=giohang');

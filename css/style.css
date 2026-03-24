@@ -666,6 +666,76 @@ ul.product_list li a:hover {
     opacity: 1;
 }
 
+.product-add-form {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
+}
+
+.product-add-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid rgba(var(--brand-rgb), 0.30);
+    background: rgba(var(--brand-rgb), 0.10);
+    color: var(--brand);
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.product-add-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.product-add-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(var(--brand-rgb), 0.14);
+    border-color: rgba(var(--brand-rgb), 0.40);
+}
+
+.site-toast {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 9999;
+    max-width: min(360px, calc(100vw - 32px));
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--text);
+    box-shadow: var(--shadow-md);
+    font-weight: 850;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.site-toast.is-show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.site-toast.is-success {
+    border-color: rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.08);
+    color: #166534;
+}
+
+.site-toast.is-error {
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+    color: #991b1b;
+}
+
 /* ==================== FOOTER ==================== */
 .footer {
     background: linear-gradient(135deg, #081a44 0%, #0b2a7a 40%, #0e4aa8 100%);
