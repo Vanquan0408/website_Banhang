@@ -13,9 +13,9 @@ $query_lietke_sp = mysqli_query($mysqli ,$sql_lietke_sp);
     <th>Số lượng</th>
     <th>Danh mục</th>
     <th>Mã sp</th>
-    <th style="width: 20%;">Tóm tắt</th> <!-- Cột "Tóm tắt" nhỏ lại -->
+    <th style="width: 20%;">Tóm tắt</th> 
     <th>Trạng thái</th>
-    <th style="width: 12%;">Quản lý</th> <!-- Cột "Quản lý" rộng hơn -->
+    <th style="width: 12%;">Quản lý</th>
 </tr>
 
     <?php
