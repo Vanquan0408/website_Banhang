@@ -16,6 +16,26 @@ try {
     $hasOrderStatus = false;
 }
 
+$hasCancelRequested = false;
+try {
+    $qHas = mysqli_query($mysqli, "SHOW COLUMNS FROM table_giohang LIKE 'cancel_requested'");
+    if ($qHas && mysqli_num_rows($qHas) > 0) {
+        $hasCancelRequested = true;
+    }
+} catch (mysqli_sql_exception $e) {
+    $hasCancelRequested = false;
+}
+
+$hasCancelReason = false;
+try {
+    $qHas = mysqli_query($mysqli, "SHOW COLUMNS FROM table_giohang LIKE 'cancel_reason'");
+    if ($qHas && mysqli_num_rows($qHas) > 0) {
+        $hasCancelReason = true;
+    }
+} catch (mysqli_sql_exception $e) {
+    $hasCancelReason = false;
+}
+
 // Best-effort DB migration: only add column if missing
 if (!$hasOrderStatus) {
     try {
@@ -24,6 +44,24 @@ if (!$hasOrderStatus) {
     } catch (mysqli_sql_exception $e) {
         // ignore (no permission / already exists / etc.)
         $hasOrderStatus = false;
+    }
+}
+
+if (!$hasCancelRequested) {
+    try {
+        mysqli_query($mysqli, "ALTER TABLE table_giohang ADD COLUMN cancel_requested TINYINT NOT NULL DEFAULT 0");
+        $hasCancelRequested = true;
+    } catch (mysqli_sql_exception $e) {
+        $hasCancelRequested = false;
+    }
+}
+
+if (!$hasCancelReason) {
+    try {
+        mysqli_query($mysqli, "ALTER TABLE table_giohang ADD COLUMN cancel_reason TEXT NULL");
+        $hasCancelReason = true;
+    } catch (mysqli_sql_exception $e) {
+        $hasCancelReason = false;
     }
 }
 
@@ -36,6 +74,10 @@ $statusTabs = [
     5 => 'Đã hủy',
     6 => 'Trả hàng/Hoàn tiền',
 ];
+
+if ($hasCancelRequested) {
+    $statusTabs[7] = 'Yêu cầu hủy';
+}
 
 $st = isset($_GET['st']) ? (int)$_GET['st'] : 0;
 if (!array_key_exists($st, $statusTabs)) {
@@ -50,9 +92,12 @@ function buildFlash($type, $message)
     return '<div class="' . $cls . '">' . htmlspecialchars($message) . '</div>';
 }
 
-function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
+function renderStatusBadge($orderStatus, $fallbackCartStatus = null, $cancelRequested = 0)
 {
     $st = (int)$orderStatus;
+    if ((int)$cancelRequested === 1 && $st !== 5) {
+        return '<span class="status-badge status-badge--pending">Yêu cầu hủy</span>';
+    }
     switch ($st) {
         case 1:
             return '<span class="status-badge status-badge--payment">Chờ thanh toán</span>';
@@ -134,23 +179,43 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
                         if ($action === 'cancel') {
                             if (!$hasOrderStatus) {
                                 $flashHtml = buildFlash('error', 'Hệ thống chưa hỗ trợ hủy đơn (thiếu trạng thái đơn hàng).');
+                            } elseif (!$hasCancelRequested) {
+                                $flashHtml = buildFlash('error', 'Hệ thống chưa hỗ trợ yêu cầu hủy đơn.');
+                            } elseif (!$hasCancelReason) {
+                                $flashHtml = buildFlash('error', 'Hệ thống chưa hỗ trợ nhập lý do hủy đơn.');
+                            } elseif ((int)($order['cancel_requested'] ?? 0) === 1) {
+                                $flashHtml = buildFlash('success', 'Đơn hàng đã gửi yêu cầu hủy. Vui lòng chờ admin xác nhận.');
                             } elseif (in_array($orderStatus, [1, 2, 3], true)) {
-                                $stmt = $mysqli->prepare("UPDATE table_giohang SET order_status=5 WHERE id_khachhang=? AND code_cart=? AND order_status IN (1,2,3)");
+                                $reason = isset($_POST['cancel_reason']) ? trim((string)$_POST['cancel_reason']) : '';
+                                $reason = preg_replace('/\s+/', ' ', $reason);
+                                $stmt = null;
+                                if ($reason === '') {
+                                    $flashHtml = buildFlash('error', 'Vui lòng nhập lý do hủy đơn.');
+                                } else {
+                                    if (function_exists('mb_substr')) {
+                                        $reason = mb_substr($reason, 0, 500, 'UTF-8');
+                                    } else {
+                                        $reason = substr($reason, 0, 500);
+                                    }
+                                    $stmt = $mysqli->prepare("UPDATE table_giohang SET cancel_requested=1, cancel_reason=? WHERE id_khachhang=? AND code_cart=? AND cancel_requested=0 AND order_status IN (1,2,3)");
+                                }
                                 if ($stmt) {
-                                    $stmt->bind_param('is', $customerId, $postCode);
+                                    $stmt->bind_param('sis', $reason, $customerId, $postCode);
                                     $stmt->execute();
                                     $affected = $stmt->affected_rows;
                                     $stmt->close();
                                     if ($affected > 0) {
-                                        $flashHtml = buildFlash('success', 'Đã hủy đơn hàng thành công.');
+                                        $flashHtml = buildFlash('success', 'Đã gửi yêu cầu hủy đơn. Vui lòng chờ admin xác nhận.');
                                     } else {
-                                        $flashHtml = buildFlash('error', 'Không thể hủy đơn ở trạng thái hiện tại.');
+                                        $flashHtml = buildFlash('error', 'Không thể gửi yêu cầu hủy ở trạng thái hiện tại.');
                                     }
                                 } else {
-                                    $flashHtml = buildFlash('error', 'Không thể hủy đơn hàng.');
+                                    if ($reason !== '') {
+                                        $flashHtml = buildFlash('error', 'Không thể gửi yêu cầu hủy đơn hàng.');
+                                    }
                                 }
                             } else {
-                                $flashHtml = buildFlash('error', 'Không thể hủy đơn ở trạng thái hiện tại.');
+                                $flashHtml = buildFlash('error', 'Không thể gửi yêu cầu hủy ở trạng thái hiện tại.');
                             }
                         } elseif ($action === 'rebuy') {
                             // Only allow repurchase for completed or canceled
@@ -277,7 +342,8 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
                             <span class="purchase-meta-label">Tình trạng</span>
                             <span class="purchase-meta-value"><?php
                                 $orderStatus = $hasOrderStatus ? ($order['order_status'] ?? 0) : 0;
-                                echo renderStatusBadge($orderStatus, $order['cart_status'] ?? 1);
+                                $cancelRequested = $hasCancelRequested ? ($order['cancel_requested'] ?? 0) : 0;
+                                echo renderStatusBadge($orderStatus, $order['cart_status'] ?? 1, $cancelRequested);
                             ?></span>
                         </div>
                         <div class="purchase-meta-row">
@@ -370,17 +436,33 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
 
                     <?php
                         $curStatus = $hasOrderStatus ? (int)($order['order_status'] ?? 1) : 0;
-                        $canCancel = $hasOrderStatus && in_array($curStatus, [1, 2, 3], true);
+                        $cancelRequested = $hasCancelRequested ? (int)($order['cancel_requested'] ?? 0) : 0;
+                        $canCancel = $hasOrderStatus && $hasCancelRequested && $cancelRequested === 0 && in_array($curStatus, [1, 2, 3], true);
                         $canRebuy = (!$hasOrderStatus) || in_array($curStatus, [4, 5], true);
                     ?>
 
                     <div class="purchase-actions purchase-actions--detail-bottom">
                         <?php if ($canCancel) { ?>
-                            <form method="post" action="index.php?quanly=donmua&code=<?php echo urlencode((string)$order['code_cart']); ?>" onsubmit="return confirm('Bạn chắc chắn muốn hủy đơn hàng này?');">
+                            <form method="post" action="index.php?quanly=donmua&code=<?php echo urlencode((string)$order['code_cart']); ?>" onsubmit="return confirm('Gửi yêu cầu hủy đơn hàng này? Admin sẽ xác nhận trước khi hủy.');" class="js-cancel-request-form">
                                 <input type="hidden" name="purchase_action" value="cancel">
                                 <input type="hidden" name="code" value="<?php echo htmlspecialchars((string)$order['code_cart']); ?>">
-                                <button type="submit" class="btn-danger">Hủy đơn hàng</button>
+                                <button type="button" class="btn-danger js-cancel-reveal">Yêu cầu hủy đơn</button>
+
+                                <div class="js-cancel-reason" hidden>
+                                    <div class="field" style="margin-top:10px;">
+                                        <label>Lý do hủy đơn</label>
+                                        <div class="input-shell">
+                                            <textarea name="cancel_reason" rows="3" disabled placeholder="VD: Đặt nhầm sản phẩm..."></textarea>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn-danger">Gửi yêu cầu hủy</button>
+                                </div>
                             </form>
+                        <?php } elseif ($hasCancelRequested && $cancelRequested === 1 && $curStatus !== 5) { ?>
+                            <div class="alert alert-success cart-alert">Đã gửi yêu cầu hủy. Vui lòng chờ admin xác nhận.</div>
+                            <?php if ($hasCancelReason && !empty($order['cancel_reason'])) { ?>
+                                <div class="alert alert-success cart-alert">Lý do: <?php echo htmlspecialchars((string)$order['cancel_reason']); ?></div>
+                            <?php } ?>
                         <?php } ?>
 
                         <?php if ($canRebuy) { ?>
@@ -391,20 +473,39 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
                             </form>
                         <?php } ?>
                     </div>
+
+                    <script>
+                        (function () {
+                            var form = document.querySelector('.js-cancel-request-form');
+                            if (!form) return;
+                            var revealBtn = form.querySelector('.js-cancel-reveal');
+                            var reasonWrap = form.querySelector('.js-cancel-reason');
+                            var textarea = form.querySelector('textarea[name="cancel_reason"]');
+                            if (!revealBtn || !reasonWrap || !textarea) return;
+
+                            revealBtn.addEventListener('click', function () {
+                                reasonWrap.hidden = false;
+                                textarea.disabled = false;
+                                textarea.required = true;
+                                textarea.focus();
+                            });
+                        })();
+                    </script>
                 </div>
 
             <?php
                 }
             } else {
                 // Danh sách đơn mua
-                $sql = "SELECT g.id_cart, g.code_cart, g.cart_status" . ($hasOrderStatus ? ", g.order_status" : "") . ", g.ap, g.xa, g.tinh, g.ghichu, g.dienthoai,
+                $sql = "SELECT g.id_cart, g.code_cart, g.cart_status" . ($hasOrderStatus ? ", g.order_status" : "") . ($hasCancelRequested ? ", g.cancel_requested" : "") . ", g.ap, g.xa, g.tinh, g.ghichu, g.dienthoai,
                                COALESCE(SUM(sp.giasp * ct.soluongmua), 0) AS tongtien,
                                COALESCE(SUM(ct.soluongmua), 0) AS tongsl
                         FROM table_giohang g
                         LEFT JOIN table_chitietdonhang ct ON g.code_cart = ct.code_cart
                         LEFT JOIN sanpham sp ON ct.id_sanpham = sp.id_sanpham
                         WHERE g.id_khachhang = $customerId
-                    " . ($hasOrderStatus && $st !== 0 ? (" AND g.order_status = " . (int)$st) : "") . "
+                    " . (($hasCancelRequested && $st === 7) ? " AND g.cancel_requested = 1" : "") . "
+                    " . (($hasOrderStatus && $st !== 0 && $st !== 7) ? (" AND g.order_status = " . (int)$st) : "") . "
                         GROUP BY g.id_cart
                         ORDER BY g.id_cart DESC";
                 $q = mysqli_query($mysqli, $sql);
@@ -429,7 +530,8 @@ function renderStatusBadge($orderStatus, $fallbackCartStatus = null)
                                 <div class="purchase-code">Mã đơn <strong><?php echo htmlspecialchars((string)$row['code_cart']); ?></strong></div>
                                 <div class="purchase-status"><?php
                                     $orderStatus = $hasOrderStatus ? ($row['order_status'] ?? 0) : 0;
-                                    echo renderStatusBadge($orderStatus, $row['cart_status'] ?? 1);
+                                        $cancelRequested = $hasCancelRequested ? ($row['cancel_requested'] ?? 0) : 0;
+                                        echo renderStatusBadge($orderStatus, $row['cart_status'] ?? 1, $cancelRequested);
                                 ?></div>
                             </div>
 

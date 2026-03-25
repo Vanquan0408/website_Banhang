@@ -22,6 +22,44 @@ if (!$hasOrderStatus) {
     }
 }
 
+// Best-effort DB migration for cancel request flag
+$hasCancelRequested = false;
+try {
+    $qHas = mysqli_query($mysqli, "SHOW COLUMNS FROM table_giohang LIKE 'cancel_requested'");
+    if ($qHas && mysqli_num_rows($qHas) > 0) {
+        $hasCancelRequested = true;
+    }
+} catch (mysqli_sql_exception $e) {
+    $hasCancelRequested = false;
+}
+if (!$hasCancelRequested) {
+    try {
+        mysqli_query($mysqli, "ALTER TABLE table_giohang ADD COLUMN cancel_requested TINYINT NOT NULL DEFAULT 0");
+        $hasCancelRequested = true;
+    } catch (mysqli_sql_exception $e) {
+        $hasCancelRequested = false;
+    }
+}
+
+// Best-effort DB migration for cancel reason
+$hasCancelReason = false;
+try {
+    $qHas = mysqli_query($mysqli, "SHOW COLUMNS FROM table_giohang LIKE 'cancel_reason'");
+    if ($qHas && mysqli_num_rows($qHas) > 0) {
+        $hasCancelReason = true;
+    }
+} catch (mysqli_sql_exception $e) {
+    $hasCancelReason = false;
+}
+if (!$hasCancelReason) {
+    try {
+        mysqli_query($mysqli, "ALTER TABLE table_giohang ADD COLUMN cancel_reason TEXT NULL");
+        $hasCancelReason = true;
+    } catch (mysqli_sql_exception $e) {
+        $hasCancelReason = false;
+    }
+}
+
 // Truy vấn thông tin chi tiết đơn hàng
 $sql_lietke_dh = "SELECT * FROM table_chitietdonhang, sanpham 
                    WHERE table_chitietdonhang.id_sanpham = sanpham.id_sanpham
@@ -39,7 +77,9 @@ $sql_khachhang = "SELECT table_dangky.tenkhachhang,
                          table_giohang.tinh AS order_tinh,
                          table_giohang.ghichu AS order_ghichu,
                          table_giohang.dienthoai AS order_dienthoai,
-                         table_giohang.order_status AS order_status
+                         table_giohang.order_status AS order_status,
+                         table_giohang.cancel_requested AS cancel_requested,
+                         table_giohang.cancel_reason AS cancel_reason
                   FROM table_giohang
                   JOIN table_dangky ON table_giohang.id_khachhang = table_dangky.id_dangky
                   WHERE table_giohang.code_cart = '$code' LIMIT 1";
@@ -82,12 +122,38 @@ $khachhang = mysqli_fetch_assoc($query_khachhang);
 
             <div class="admin-divider"></div>
             <p class="table-title">Trạng thái đơn hàng</p>
+
+            <?php
+                $cur = isset($khachhang['order_status']) ? (int)$khachhang['order_status'] : 1;
+                $cancelRequested = isset($khachhang['cancel_requested']) ? (int)$khachhang['cancel_requested'] : 0;
+            ?>
+
+            <?php if ($hasCancelRequested && $cancelRequested === 1 && $cur !== 5) { ?>
+                <div class="admin-alert admin-alert--info" role="alert" style="margin: 10px 0 0;">
+                    <div class="admin-alert-icon">!</div>
+                    <div>
+                        <div class="admin-alert-title">Yêu cầu hủy đơn</div>
+                        <div class="admin-alert-desc">Khách hàng đã gửi yêu cầu hủy. Bạn có thể duyệt hủy hoặc từ chối.</div>
+                        <?php if ($hasCancelReason && !empty($khachhang['cancel_reason'])) { ?>
+                            <div class="admin-alert-desc" style="margin-top:6px;">Lý do: <?php echo htmlspecialchars((string)$khachhang['cancel_reason']); ?></div>
+                        <?php } ?>
+                    </div>
+                </div>
+                <div class="admin-actions" style="margin-top: 10px; flex-wrap: wrap;">
+                    <form method="post" action="modules/quanlydonhang/xuly.php?action=approve_cancel&code=<?php echo htmlspecialchars($code); ?>" onsubmit="return confirm('Duyệt hủy đơn hàng này?');">
+                        <button type="submit" class="btn delete-btn">Duyệt hủy</button>
+                    </form>
+                    <form method="post" action="modules/quanlydonhang/xuly.php?action=reject_cancel&code=<?php echo htmlspecialchars($code); ?>" onsubmit="return confirm('Từ chối yêu cầu hủy?');">
+                        <button type="submit" class="btn edit-btn">Từ chối hủy</button>
+                    </form>
+                </div>
+            <?php } ?>
+
             <form method="post" action="modules/quanlydonhang/xuly.php?action=update_order_status&code=<?php echo htmlspecialchars($code); ?>" class="styled-form">
                 <div style="display:grid; gap:10px;">
                     <label class="form-label">Cập nhật trạng thái</label>
                     <select name="order_status" class="form-select">
                         <?php
-                            $cur = isset($khachhang['order_status']) ? (int)$khachhang['order_status'] : 1;
                             $opts = [
                                 1 => 'Chờ thanh toán',
                                 2 => 'Vận chuyển',

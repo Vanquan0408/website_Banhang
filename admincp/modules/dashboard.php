@@ -14,6 +14,16 @@ try {
 	$hasOrderStatus = false;
 }
 
+$hasCancelRequested = false;
+try {
+	$qHas = mysqli_query($mysqli, "SHOW COLUMNS FROM table_giohang LIKE 'cancel_requested'");
+	if ($qHas && mysqli_num_rows($qHas) > 0) {
+		$hasCancelRequested = true;
+	}
+} catch (mysqli_sql_exception $e) {
+	$hasCancelRequested = false;
+}
+
 $fetchScalar = function (string $sql, $default = 0) use ($mysqli) {
 	try {
 		$r = mysqli_query($mysqli, $sql);
@@ -71,12 +81,16 @@ if ($hasOrderStatus) {
 	}
 }
 
-$renderOrderBadge = function ($orderStatus, $cartStatus) use ($hasOrderStatus) {
+$renderOrderBadge = function ($orderStatus, $cartStatus, $cancelRequested = 0) use ($hasOrderStatus, $hasCancelRequested) {
 	$cartStatus = (int)$cartStatus;
 	if (!$hasOrderStatus) {
 		return ($cartStatus === 1)
 			? '<span class="admin-badge admin-badge--new">Đơn hàng mới</span>'
 			: '<span class="admin-badge admin-badge--seen">Đã xem</span>';
+	}
+
+	if ($hasCancelRequested && (int)$cancelRequested === 1 && (int)$orderStatus !== 5) {
+		return '<span class="admin-status admin-status--pending">Yêu cầu hủy</span>';
 	}
 
 	$s = (int)$orderStatus;
@@ -97,6 +111,7 @@ $renderOrderBadge = function ($orderStatus, $cartStatus) use ($hasOrderStatus) {
 $recentOrders = [];
 try {
 	$sql = "SELECT g.id_cart, g.code_cart, g.cart_status" . ($hasOrderStatus ? ", g.order_status" : "") . ",
+			   " . ($hasCancelRequested ? " g.cancel_requested," : "") . "
 				   d.tenkhachhang,
 				   COALESCE(SUM(sp.giasp * ct.soluongmua), 0) AS tongtien,
 				   COALESCE(SUM(ct.soluongmua), 0) AS tongsl
@@ -218,7 +233,8 @@ try {
 							<td><?php echo number_format((int)($row['tongtien'] ?? 0), 0, ',', '.'); ?>đ</td>
 							<td><?php
 								$os = $hasOrderStatus ? (int)($row['order_status'] ?? 1) : 0;
-								echo $renderOrderBadge($os, $row['cart_status'] ?? 0);
+								$cr = $hasCancelRequested ? (int)($row['cancel_requested'] ?? 0) : 0;
+								echo $renderOrderBadge($os, $row['cart_status'] ?? 0, $cr);
 							?></td>
 							<td>
 								<div class="admin-actions">

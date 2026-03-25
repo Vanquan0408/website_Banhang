@@ -42,6 +42,11 @@ $query_lietke_dh = mysqli_query($mysqli ,$sql_lietke_dh);
         <td><?php echo htmlspecialchars(!empty($row['dienthoai']) ? $row['dienthoai'] : $row['default_dienthoai']); ?></td>
         <td>
             <?php
+            $cancelReq = isset($row['cancel_requested']) ? (int)$row['cancel_requested'] : 0;
+            if ($cancelReq === 1) {
+                echo '<span class="admin-status admin-status--pending">Yêu cầu hủy</span> ';
+            }
+
             if($row['cart_status']==1){
                 echo '<a class="admin-badge admin-badge--new" href="modules/quanlydonhang/xuly.php?code='.htmlspecialchars($row['code_cart']).'">Đơn hàng mới</a>';
             }else{

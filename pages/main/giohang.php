@@ -25,6 +25,44 @@ if (isset($_GET['action']) && $_GET['action'] === 'order') {
             }
         }
 
+        // Best-effort DB migration: flag for user cancel request (admin must confirm)
+        $hasCancelRequested = false;
+        try {
+            $qHas = mysqli_query($mysqli, "SHOW COLUMNS FROM table_giohang LIKE 'cancel_requested'");
+            if ($qHas && mysqli_num_rows($qHas) > 0) {
+                $hasCancelRequested = true;
+            }
+        } catch (mysqli_sql_exception $e) {
+            $hasCancelRequested = false;
+        }
+        if (!$hasCancelRequested) {
+            try {
+                mysqli_query($mysqli, "ALTER TABLE table_giohang ADD COLUMN cancel_requested TINYINT NOT NULL DEFAULT 0");
+                $hasCancelRequested = true;
+            } catch (mysqli_sql_exception $e) {
+                $hasCancelRequested = false;
+            }
+        }
+
+        // Best-effort DB migration: store user cancel reason
+        $hasCancelReason = false;
+        try {
+            $qHas = mysqli_query($mysqli, "SHOW COLUMNS FROM table_giohang LIKE 'cancel_reason'");
+            if ($qHas && mysqli_num_rows($qHas) > 0) {
+                $hasCancelReason = true;
+            }
+        } catch (mysqli_sql_exception $e) {
+            $hasCancelReason = false;
+        }
+        if (!$hasCancelReason) {
+            try {
+                mysqli_query($mysqli, "ALTER TABLE table_giohang ADD COLUMN cancel_reason TEXT NULL");
+                $hasCancelReason = true;
+            } catch (mysqli_sql_exception $e) {
+                $hasCancelReason = false;
+            }
+        }
+
         $q = mysqli_query($mysqli, "SELECT * FROM table_dangky WHERE id_dangky='$id_khachhang' LIMIT 1");
         $user = mysqli_fetch_assoc($q);
         $ap = $user['ap'] ?? '';

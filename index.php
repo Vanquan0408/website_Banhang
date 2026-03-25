@@ -19,9 +19,14 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css?v=20260324">
-    <script type="text/javascript" src="js_VQ/jquery-3.7.1.js?v=20260324"></script>
-    <script type="text/javascript" src="js_VQ/jscript.js?v=20260324"></script>
+    <?php
+        $cssVer = @filemtime(__DIR__ . '/css/style.css') ?: '20260325';
+        $jqVer = @filemtime(__DIR__ . '/js_VQ/jquery-3.7.1.js') ?: '20260325';
+        $jsVer = @filemtime(__DIR__ . '/js_VQ/jscript.js') ?: '20260325';
+    ?>
+    <link rel="stylesheet" href="css/style.css?v=<?php echo urlencode((string)$cssVer); ?>">
+    <script type="text/javascript" src="js_VQ/jquery-3.7.1.js?v=<?php echo urlencode((string)$jqVer); ?>"></script>
+    <script type="text/javascript" src="js_VQ/jscript.js?v=<?php echo urlencode((string)$jsVer); ?>"></script>
     <title>UI | Website Bán Hàng </title>
 </head>
 <body>
